@@ -147,7 +147,7 @@ GameObject:
   - component: {fileID: 4257927808096344795}
   - component: {fileID: -8372541187275843368}
   m_Layer: 5
-  m_Name: Zenith
+  m_Name: Spectre Hood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -171,7 +171,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 200.8795, y: 725.7604}
-  m_SizeDelta: {x: 50, y: 50}
+  m_SizeDelta: {x: 30, y: 27.5}
   m_Pivot: {x: 0.49999994, y: 0.49999994}
 --- !u!222 &4257927808096344794
 CanvasRenderer:
@@ -201,7 +201,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: ce7cb4d334d30ff4d9eea3fd0598e8ea, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 5a655293f78f7ee44aa6b448d7bd338b, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -224,10 +224,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   rarity: 4
-  type: 3
+  type: 5
   quantity: 1
   stackable: 0
   favorite: 0
   quantityText: {fileID: 0}
   maxQuantity: 1
-  id: 1
+  id: 2
