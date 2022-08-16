@@ -1,4 +1,6 @@
 ﻿
+using UnityEngine.Analytics;
+
 namespace Code
 {
     
@@ -43,11 +45,31 @@ namespace Code
 
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                float totalItemsCount = 0f;
-                for (int y = 0; y < duplicateItems[uniqueIds[i]][y].Count; y++)
+                if (duplicateItems[uniqueIds[i]].Count < 2) continue;
+                
+                int totalItemsCount = 0;
+                
+                for (int y = duplicateItems[uniqueIds[i]].Count - 1; i >= 0; i--)
                 {
-                    
+                    //TODO Merge
                 }
+                
+            }
+        }
+
+        void MergeItems(InventoryItem item1, InventoryItem item2)
+        {
+            Debug.Assert(item1.Id != item1.Id, "Can't merge different items");
+            int maxItemAmount = item1.MaxItemAmount;
+            item1.ItemAmount += item2.ItemAmount;
+            if (item1.ItemAmount > maxItemAmount)
+            {
+                item2.ItemAmount = item1.ItemAmount - maxItemAmount;
+                item1.ItemAmount = maxItemAmount;
+            }
+            else
+            {
+                item2.ItemAmount = 0;
             }
         }
         public InventoryItem PopItem(int index)
@@ -99,7 +121,16 @@ namespace Code
     public abstract class InventoryItem
     {
         public int Id { get; set; }
-        public int Count { get; set; }
+        public int ItemAmount { get; set; }
+
+        public int MaxItemAmount { get; private set; }
+        private ItemSlot itemSlot;
+
+        public void SetItemSlot(ItemSlot newItemSlot)
+        {
+            itemSlot = newItemSlot;
+            newItemSlot.Item = this;
+        }
     }
     public class ItemSlot
     {
@@ -109,12 +140,17 @@ namespace Code
         {
             return Item == null;
         }
-        
+
+        public void SetItem(InventoryItem item)
+        {
+            Item = null;
+            item.SetItemSlot(this);
+        }
         public InventoryItem TakeItem() //Returns item and empties the item slot
         {
-            InventoryItem poppedItem = Item;
+            InventoryItem takenItem = Item;
             Item = null;
-            return poppedItem;
+            return takenItem;
         }
     }
 }
