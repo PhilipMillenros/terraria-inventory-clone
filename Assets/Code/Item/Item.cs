@@ -27,16 +27,18 @@ public class Item : MonoBehaviour
         }
     }
     
-    public void Stack(Item item)
+    public void Stack(Item otherItem)
     {
-        Quantity += item.Quantity;
+        Quantity += otherItem.Quantity;
         if (Quantity > maxQuantity)
         {
-            item.Quantity = Quantity - maxQuantity;
+            otherItem.Quantity = Quantity - maxQuantity;
             Quantity = maxQuantity;
         }
         else
-            item.Quantity = 0;
+        {
+            otherItem.Quantity = 0;
+        }
     }
     public void AddQuantity(int value)
     {

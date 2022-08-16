@@ -8,24 +8,52 @@ namespace Code
     using UnityEngine;
     public class GenericInventory
     {
-        private ItemSlot[] inventoryItems;
+        private ItemSlot[] itemSlots;
 
         public GenericInventory(int inventorySlots)
         {
-            inventoryItems = new ItemSlot[inventorySlots];
+            itemSlots = new ItemSlot[inventorySlots];
         }   
         public ItemSlot this[int index]
         {
-            get => inventoryItems[index];
+            get => itemSlots[index];
         }
         public void Sort()
         {
-            QuickSort(inventoryItems, 0, inventoryItems.Length - 1);
+            MergeDuplicateItems();
+            QuickSort(itemSlots, 0, itemSlots.Length - 1);
+        }
+
+        private void MergeDuplicateItems()
+        {
+            var duplicateItems = new Dictionary<int, List<InventoryItem>>();
+            List<int> uniqueIds = new List<int>();
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                if (itemSlots[i].IsEmpty()) continue;
+
+                int itemId = itemSlots[i].Item.Id;
+                if (duplicateItems.ContainsKey(itemId))
+                {
+                    duplicateItems.Add(itemId, new List<InventoryItem>());
+                    uniqueIds.Add(itemId);
+                }
+                duplicateItems[itemId].Add(itemSlots[i].Item); 
+            }
+
+            for (int i = 0; i < uniqueIds.Count; i++)
+            {
+                float totalItemsCount = 0f;
+                for (int y = 0; y < duplicateItems[uniqueIds[i]][y].Count; y++)
+                {
+                    
+                }
+            }
         }
         public InventoryItem PopItem(int index)
         {
-            InventoryItem poppedItem = inventoryItems[index].Item;
-            inventoryItems[index] = null;
+            InventoryItem poppedItem = itemSlots[index].Item;
+            itemSlots[index] = null;
             return poppedItem;
         }
         private void QuickSort(ItemSlot[] itemSlots, int left, int right)
@@ -61,9 +89,9 @@ namespace Code
         }
         public void Swap(int firstIndex, int secondIndex)
         {
-            ItemSlot temp = inventoryItems[firstIndex];
-            inventoryItems[firstIndex] = inventoryItems[secondIndex];
-            inventoryItems[secondIndex] = temp;
+            ItemSlot temp = itemSlots[firstIndex];
+            itemSlots[firstIndex] = itemSlots[secondIndex];
+            itemSlots[secondIndex] = temp;
         }
     }
     
@@ -82,7 +110,7 @@ namespace Code
             return Item == null;
         }
         
-        public InventoryItem PopItem()
+        public InventoryItem TakeItem() //Returns item and empties the item slot
         {
             InventoryItem poppedItem = Item;
             Item = null;
