@@ -22,11 +22,11 @@ namespace Code
         }
         public void Sort()
         {
-            MergeDuplicateItems();
+            StackDuplicateItems();
             QuickSort(itemSlots, 0, itemSlots.Length - 1);
         }
 
-        private void MergeDuplicateItems()
+        private void StackDuplicateItems()
         {
             var duplicateItems = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
@@ -45,31 +45,32 @@ namespace Code
 
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                if (duplicateItems[uniqueIds[i]].Count < 2) continue;
+                int id = uniqueIds[i];
                 
-                int totalItemsCount = 0;
+                if (duplicateItems[id].Count < 2) continue;
                 
-                for (int y = duplicateItems[uniqueIds[i]].Count - 1; i >= 0; i--)
+                for (int y = 0; y < duplicateItems[id].Count; y++)
                 {
-                    //TODO Merge
+                    StackItems(duplicateItems[id][y + 1], duplicateItems[id][y]);
                 }
-                
             }
         }
 
-        void MergeItems(InventoryItem item1, InventoryItem item2)
+        void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
         {
-            Debug.Assert(item1.Id != item1.Id, "Can't merge different items");
-            int maxItemAmount = item1.MaxItemAmount;
-            item1.ItemAmount += item2.ItemAmount;
-            if (item1.ItemAmount > maxItemAmount)
+            Debug.Assert(receivingItem.Id != receivingItem.Id, "Can't merge items with different ids");
+            
+            int maxStackAmount = receivingItem.MaxStackAmount;
+            receivingItem.ItemAmount += givingItem.ItemAmount;
+            
+            if (receivingItem.ItemAmount > maxStackAmount)
             {
-                item2.ItemAmount = item1.ItemAmount - maxItemAmount;
-                item1.ItemAmount = maxItemAmount;
+                givingItem.ItemAmount = receivingItem.ItemAmount - maxStackAmount;
+                receivingItem.ItemAmount = maxStackAmount;
             }
             else
             {
-                item2.ItemAmount = 0;
+                givingItem.ItemAmount = 0;
             }
         }
         public InventoryItem PopItem(int index)
@@ -123,7 +124,7 @@ namespace Code
         public int Id { get; set; }
         public int ItemAmount { get; set; }
 
-        public int MaxItemAmount { get; private set; }
+        public int MaxStackAmount { get; private set; }
         private ItemSlot itemSlot;
 
         public void SetItemSlot(ItemSlot newItemSlot)
@@ -140,7 +141,6 @@ namespace Code
         {
             return Item == null;
         }
-
         public void SetItem(InventoryItem item)
         {
             Item = null;
