@@ -1,4 +1,5 @@
 ﻿
+using System.Runtime.CompilerServices;
 using UnityEngine.Analytics;
 
 namespace Code
@@ -23,10 +24,37 @@ namespace Code
         public void Sort()
         {
             StackDuplicateItems();
-            QuickSort(itemSlots, 0, itemSlots.Length - 1);
+            QuickSort(FindAllItems(), 0, itemSlots.Length - 1);
         }
 
-        private void StackDuplicateItems()
+        private InventoryItem[] FindAllItems()
+        {
+            int itemCount = GetOccupiedSlotsCount();
+            
+            InventoryItem[] items = new InventoryItem[itemCount];
+            int pivot = 0;
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                if (!itemSlots[i].IsEmpty())
+                {
+                    items[pivot] = itemSlots[i].Item;
+                    pivot++;
+                }
+            }
+            return items;
+        }
+
+        private int GetOccupiedSlotsCount()
+        {
+            int itemCount = 0;
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                itemCount += itemSlots[i].IsEmpty() ? 0 : 1;
+            }
+
+            return itemCount;
+        }
+        public void StackDuplicateItems()
         {
             var duplicateItems = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
@@ -55,102 +83,127 @@ namespace Code
                 }
             }
         }
-
-        void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
+        private void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
         {
             Debug.Assert(receivingItem.Id != receivingItem.Id, "Can't merge items with different ids");
             
             int maxStackAmount = receivingItem.MaxStackAmount;
-            receivingItem.ItemAmount += givingItem.ItemAmount;
+            receivingItem.StackAmount += givingItem.StackAmount;
             
-            if (receivingItem.ItemAmount > maxStackAmount)
+            if (receivingItem.StackAmount > maxStackAmount)
             {
-                givingItem.ItemAmount = receivingItem.ItemAmount - maxStackAmount;
-                receivingItem.ItemAmount = maxStackAmount;
+                givingItem.StackAmount = receivingItem.StackAmount - maxStackAmount;
+                receivingItem.StackAmount = maxStackAmount;
             }
-            else
+
+            if (givingItem.StackAmount < 1)
             {
-                givingItem.ItemAmount = 0;
+                givingItem.ItemSlot.DiscardItem();
             }
         }
-        public InventoryItem PopItem(int index)
-        {
-            InventoryItem poppedItem = itemSlots[index].Item;
-            itemSlots[index] = null;
-            return poppedItem;
-        }
-        private void QuickSort(ItemSlot[] itemSlots, int left, int right)
+        private void QuickSort(InventoryItem[] items, int left, int right) //Technically QS shouldn't belong to Inventory
         {
             int i = left;
             int y = right;
             int pivot = left;
             while (i <= y)
             {
-                while (itemSlots[i].Item.Id < itemSlots[pivot].Item.Id)
+                while (items[i].Id < items[pivot].Id)
                 {
                     i++;
                 }
 
-                while (itemSlots[y].Item.Id > itemSlots[pivot].Item.Id)
+                while (items[y].Id > items[pivot].Id)
                 {
                     y--;
                 }
 
                 if (i > y) continue;
-                Swap(i, y);
+                SwapItems(i, y);
                 i++;
                 y--;
             }
             if (left < y)
             {
-                QuickSort(itemSlots, left, y);
+                QuickSort(items, left, y);
             }
             if (right > i)
             {
-                QuickSort(itemSlots, i, right);
+                QuickSort(items, i, right);
             }
         }
-        public void Swap(int firstIndex, int secondIndex)
+        public void SwapItems(int firstIndex, int secondIndex)
         {
-            ItemSlot temp = itemSlots[firstIndex];
-            itemSlots[firstIndex] = itemSlots[secondIndex];
-            itemSlots[secondIndex] = temp;
+            InventoryItem temp = itemSlots[firstIndex].Item;
+            itemSlots[firstIndex].SetItem(itemSlots[secondIndex].Item);
+            itemSlots[secondIndex].SetItem(temp);
+        }
+        public void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
+        {
+            InventoryItem temp = itemSlot1.Item;
+            itemSlot1.SetItem(itemSlot2.Item);
+            itemSlot2.SetItem(temp);
         }
     }
     
 
     public abstract class InventoryItem
     {
-        public int Id { get; set; }
-        public int ItemAmount { get; set; }
+        public int Id { get; private set; }
+        public int StackAmount { get; set; }
 
         public int MaxStackAmount { get; private set; }
         private ItemSlot itemSlot;
-
+        public ItemSlot ItemSlot
+        {
+            get => itemSlot;
+            private set => itemSlot = value;
+        }
         public void SetItemSlot(ItemSlot newItemSlot)
         {
-            itemSlot = newItemSlot;
-            newItemSlot.Item = this;
+            ItemSlot = newItemSlot;
+            if (ItemSlot.Item != this)
+            {
+                newItemSlot.SetItem(this);
+            }
         }
     }
     public class ItemSlot
     {
-        public InventoryItem Item;
+        private InventoryItem item;
+
+        public InventoryItem Item
+        {
+            get => item;
+            private set => item = value;
+        }
 
         public bool IsEmpty()
         {
             return Item == null;
         }
-        public void SetItem(InventoryItem item)
+        public void SetItem(InventoryItem newItem)
         {
-            Item = null;
-            item.SetItemSlot(this);
+            Debug.Assert(newItem == null, "Item is null");
+            Item = newItem;
+            if (newItem.ItemSlot != this)
+            {
+                newItem.SetItemSlot(this);
+            }
         }
-        public InventoryItem TakeItem() //Returns item and empties the item slot
+        /// <summary>
+        /// Returns item and empties the item slot.
+        /// </summary>
+        public InventoryItem TakeItem()
         {
             InventoryItem takenItem = Item;
             Item = null;
             return takenItem;
+        }
+        
+        public void DiscardItem()
+        {
+            Item = null;
         }
     }
 }
