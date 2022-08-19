@@ -12,19 +12,40 @@ namespace Code
     public class GenericInventory
     {
         private ItemSlot[] itemSlots;
-        
+        public int ItemSlotsCount
+        {
+            get => itemSlots.Length;
+            set => SetItemSlotsCount(value);
+        }
         public GenericInventory(int inventorySlots)
         {
             itemSlots = new ItemSlot[inventorySlots];
+            InitializeArray(itemSlots, () => new ItemSlot());
         }
-        public void AddNewItemSlots(int amount)
+
+        private void InitializeArray<T>(T[] array, Func<T> provider, int startIndex = 0)
         {
-            int totalItemSlots = amount + itemSlots.Length;
-            ItemSlot[] newItemSlots = new ItemSlot[totalItemSlots];
-            InventoryItem[] items = FindAllItems();
-            for (int i = 0; i < itemSlots.Length; i++)
+            for (int i = startIndex; i < array.Length; i++)
             {
+                array[i] = provider();
+            }
+        }
+        public void SetItemSlotsCount(int amount)
+        { 
+            ItemSlot[] newItemSlots = new ItemSlot[amount];
+            for (int i = 0; i < amount; i++)
+            {
+                if (i >= itemSlots.Length)
+                {
+                    break;
+                }
                 newItemSlots[i] = itemSlots[i];
+            }
+
+            int uninitializedPartOfArray = itemSlots.Length - 1;
+            if (uninitializedPartOfArray < amount - 1)
+            {
+                InitializeArray(newItemSlots, () => new ItemSlot(), uninitializedPartOfArray);
             }
             itemSlots = newItemSlots;
         }
@@ -189,7 +210,7 @@ namespace Code
     }
     
 
-    public abstract class InventoryItem
+    public class InventoryItem
     {
         public int Id { get; private set; }
         public int StackAmount { get; set; }
@@ -200,6 +221,13 @@ namespace Code
         {
             get => itemSlot;
             private set => itemSlot = value;
+        }
+
+        public InventoryItem(int id, int stackAmount, int maxStackAmount = 1000)
+        {
+            Id = id;
+            StackAmount = stackAmount;
+            MaxStackAmount = maxStackAmount;
         }
         public bool SetItemSlot(ItemSlot newItemSlot)
         {
@@ -224,13 +252,17 @@ namespace Code
     public class ItemSlot
     {
         private InventoryItem item;
-
+        public Action<InventoryItem> OnItemReceived;
         public InventoryItem Item
         {
             get => item;
             private set => item = value;
         }
 
+        public ItemSlot()
+        {
+            item = new InventoryItem(UnityEngine.Random.Range(0, 15), 5);
+        }
         public bool IsEmpty()
         {
             return Item == null;
@@ -252,6 +284,7 @@ namespace Code
             if (newItem != null && newItem.ItemSlot != this)
             {
                 newItem.SetItemSlot(this);
+                OnItemReceived?.Invoke(newItem);
             }
             return true;
         }
