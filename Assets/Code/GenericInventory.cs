@@ -28,7 +28,6 @@ namespace Code
             }
             itemSlots = newItemSlots;
         }
-        
         public ItemSlot this[int index]
         {
             get => itemSlots[index];
@@ -40,10 +39,22 @@ namespace Code
             QuickSort(items, 0, items.Length - 1);
             
         }
-
+        public void EmptyInventory()
+        {
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                itemSlots[i].DiscardItem();
+            }
+        }
+        public InventoryItem[] GetAllItemsAndEmptyInventory()
+        {
+            InventoryItem[] items = FindAllItems();
+            EmptyInventory();
+            return items;
+        }
         private InventoryItem[] FindAllItems()
         {
-            int itemCount = GetOccupiedSlotsCount();
+            int itemCount = OccupiedSlotsCount();
             
             InventoryItem[] items = new InventoryItem[itemCount];
             int pivot = 0;
@@ -58,14 +69,13 @@ namespace Code
             return items;
         }
 
-        private int GetOccupiedSlotsCount()
+        private int OccupiedSlotsCount()
         {
             int itemCount = 0;
             for (int i = 0; i < itemSlots.Length; i++)
             {
                 itemCount += itemSlots[i].IsEmpty() ? 0 : 1;
             }
-
             return itemCount;
         }
         public void StackDuplicateItems()
@@ -153,12 +163,6 @@ namespace Code
             array[firstIndex] = array[secondIndex];
             array[secondIndex] = temp;
         }
-        public void SwapItems(int firstIndex, int secondIndex)
-        {
-            InventoryItem temp = itemSlots[firstIndex].Item;
-            itemSlots[firstIndex].SetItem(itemSlots[secondIndex].Item);
-            itemSlots[secondIndex].SetItem(temp);
-        }
         public void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
         {
             if (!IsSwapValid(itemSlot1, itemSlot2))
@@ -205,11 +209,16 @@ namespace Code
             }
             
             ItemSlot = newItemSlot;
-            if (ItemSlot.Item != this)
+            if (ItemSlot.Item != this && newItemSlot != null)
             {
                 newItemSlot.SetItem(this);
             }
             return true;
+        }
+
+        public void DetachFromItemSlot()
+        {
+            itemSlot = null;
         }
     }
     public class ItemSlot
@@ -245,9 +254,8 @@ namespace Code
                 newItem.SetItemSlot(this);
             }
             return true;
-        }   
+        }
         
-
         //For derived members that has item requirements, example armor slots only allow armor items
         public virtual bool IsItemValid(InventoryItem item)
         {
@@ -267,6 +275,7 @@ namespace Code
         
         public void DiscardItem()
         {
+            Item.DetachFromItemSlot();
             Item = null;
         }
     }
