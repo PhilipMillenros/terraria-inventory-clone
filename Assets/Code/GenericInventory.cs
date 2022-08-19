@@ -16,7 +16,20 @@ namespace Code
         public GenericInventory(int inventorySlots)
         {
             itemSlots = new ItemSlot[inventorySlots];
-        }   
+        }
+
+        public void AddNewItemSlots(int amount)
+        {
+            int totalItemSlots = amount + itemSlots.Length;
+            ItemSlot[] newItemSlots = new ItemSlot[totalItemSlots];
+            InventoryItem[] items = FindAllItems();
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                newItemSlots[i] = itemSlots[i];
+            }
+            itemSlots = newItemSlots;
+        }
+        
         public ItemSlot this[int index]
         {
             get => itemSlots[index];
@@ -24,7 +37,9 @@ namespace Code
         public void Sort()
         {
             StackDuplicateItems();
-            QuickSort(FindAllItems(), 0, itemSlots.Length - 1);
+            InventoryItem[] items = FindAllItems();
+            QuickSort(items, 0, items.Length - 1);
+            
         }
 
         private InventoryItem[] FindAllItems()
@@ -119,7 +134,7 @@ namespace Code
                 }
 
                 if (i > y) continue;
-                SwapItems(i, y);
+                Swap(items, i, y);
                 i++;
                 y--;
             }
@@ -132,6 +147,13 @@ namespace Code
                 QuickSort(items, i, right);
             }
         }
+
+        private void Swap<T>(T[] array, int firstIndex, int secondIndex)
+        {
+            T temp = array[firstIndex];
+            array[firstIndex] = array[secondIndex];
+            array[secondIndex] = temp;
+        }
         public void SwapItems(int firstIndex, int secondIndex)
         {
             InventoryItem temp = itemSlots[firstIndex].Item;
@@ -143,6 +165,15 @@ namespace Code
             InventoryItem temp = itemSlot1.Item;
             itemSlot1.SetItem(itemSlot2.Item);
             itemSlot2.SetItem(temp);
+        }
+
+        public void MoveItem(ItemSlot from, ItemSlot to)
+        {
+            if (!to.IsEmpty())
+            {
+                SwapItems(from, to);
+            }
+            to.SetItem(from.TakeItem());
         }
     }
     
@@ -184,9 +215,8 @@ namespace Code
         }
         public void SetItem(InventoryItem newItem)
         {
-            Debug.Assert(newItem == null, "Item is null");
             Item = newItem;
-            if (newItem.ItemSlot != this)
+            if (newItem != null && newItem.ItemSlot != this)
             {
                 newItem.SetItemSlot(this);
             }
