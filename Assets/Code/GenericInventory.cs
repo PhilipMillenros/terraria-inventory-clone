@@ -12,12 +12,11 @@ namespace Code
     public class GenericInventory
     {
         private ItemSlot[] itemSlots;
-
+        
         public GenericInventory(int inventorySlots)
         {
             itemSlots = new ItemSlot[inventorySlots];
         }
-
         public void AddNewItemSlots(int amount)
         {
             int totalItemSlots = amount + itemSlots.Length;
@@ -162,11 +161,19 @@ namespace Code
         }
         public void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
         {
+            if (!IsSwapValid(itemSlot1, itemSlot2))
+            {
+                return;
+            }
             InventoryItem temp = itemSlot1.Item;
             itemSlot1.SetItem(itemSlot2.Item);
             itemSlot2.SetItem(temp);
         }
 
+        public bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
+        {
+            return itemSlot1.IsItemValid(itemSlot2.Item) && itemSlot2.IsItemValid(itemSlot1.Item);
+        }
         public void MoveItem(ItemSlot from, ItemSlot to)
         {
             if (!to.IsEmpty())
@@ -190,13 +197,19 @@ namespace Code
             get => itemSlot;
             private set => itemSlot = value;
         }
-        public void SetItemSlot(ItemSlot newItemSlot)
+        public bool SetItemSlot(ItemSlot newItemSlot)
         {
+            if (!newItemSlot.IsItemValid(this))
+            {
+                return false;
+            }
+            
             ItemSlot = newItemSlot;
             if (ItemSlot.Item != this)
             {
                 newItemSlot.SetItem(this);
             }
+            return true;
         }
     }
     public class ItemSlot
@@ -213,13 +226,34 @@ namespace Code
         {
             return Item == null;
         }
-        public void SetItem(InventoryItem newItem)
+        
+        /// <summary>
+        /// Sets the inventory slot item, returns if the operation succeeded or not
+        /// </summary>
+        /// <param name="newItem"></param>
+        /// <returns></returns>
+        public bool SetItem(InventoryItem newItem)
         {
+            if (!IsItemValid(newItem))
+            {
+                return false;
+            }
+
             Item = newItem;
             if (newItem != null && newItem.ItemSlot != this)
             {
                 newItem.SetItemSlot(this);
             }
+            return true;
+        }   
+        
+
+        //For derived members that has item requirements, example armor slots only allow armor items
+        public virtual bool IsItemValid(InventoryItem item)
+        {
+            Debug.Assert(item == null, "Item is null");
+            
+            return true;
         }
         /// <summary>
         /// Returns item and empties the item slot.
