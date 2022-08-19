@@ -8,14 +8,14 @@ public class InventoryUI : MonoBehaviour
     private GenericInventory inventory;
     void Start()
     {
-        inventory = new GenericInventory(50);
-        
+        Tests();
     }
 
     private void Tests()
     {
-        Debug.Log("Initialization" + (InitializeTest() ? "Passed" : "Failed"));
-        Debug.Log("SetItemSlots" + (SetItemSlotsTest() ? "Passed" : "Failed"));
+        Debug.Log("Initialization: " + (InitializeTest() ? "Passed" : "Failed"));
+        Debug.Log("Set Item Slots: " + (SetItemSlotsTest() ? "Passed" : "Failed"));
+        Debug.Log("Sort Items: " + (SortTest() ? "Passed" : "Failed"));
     }
 
     private bool InitializeTest()
@@ -59,6 +59,20 @@ public class InventoryUI : MonoBehaviour
         }
         return true;
     }
+
+    private bool SortTest()
+    {
+        GenericInventory testInventory = new GenericInventory(500);
+        testInventory.Sort();
+        for (int i = 1; i < testInventory.ItemSlotsCount; i++)
+        {
+            if (testInventory[i - 1].Item.Id > testInventory[i].Item.Id)
+            {
+                return false;
+            }
+        }
+        return true;
+    } 
 
     
 }

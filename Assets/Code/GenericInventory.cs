@@ -108,12 +108,12 @@ namespace Code
                 if (itemSlots[i].IsEmpty()) continue;
 
                 int itemId = itemSlots[i].Item.Id;
-                if (duplicateItems.ContainsKey(itemId))
+                if (!duplicateItems.ContainsKey(itemId))
                 {
                     duplicateItems.Add(itemId, new List<InventoryItem>());
                     uniqueIds.Add(itemId);
                 }
-                duplicateItems[itemId].Add(itemSlots[i].Item); 
+                duplicateItems[itemId].Add(itemSlots[i].Item);
             }
 
             for (int i = 0; i < uniqueIds.Count; i++)
