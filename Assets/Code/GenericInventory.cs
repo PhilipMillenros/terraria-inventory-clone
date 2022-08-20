@@ -17,6 +17,10 @@ namespace Code
             get => itemSlots.Length;
             set => SetItemSlotsCount(value);
         }
+        public ItemSlot this[int index]
+        {
+            get => itemSlots[index];
+        }
         public GenericInventory(int inventorySlots)
         {
             itemSlots = new ItemSlot[inventorySlots];
@@ -30,41 +34,39 @@ namespace Code
                 array[i] = provider();
             }
         }
-        public void SetItemSlotsCount(int amount)
-        { 
-            ItemSlot[] newItemSlots = new ItemSlot[amount];
-            for (int i = 0; i < amount; i++)
-            {
-                if (i >= itemSlots.Length)
-                {
-                    break;
-                }
-                newItemSlots[i] = itemSlots[i];
-            }
-
-            int uninitializedPartOfArray = itemSlots.Length - 1;
-            if (uninitializedPartOfArray < amount - 1)
-            {
-                InitializeArray(newItemSlots, () => new ItemSlot(), uninitializedPartOfArray);
-            }
-            itemSlots = newItemSlots;
-        }
-        public ItemSlot this[int index]
-        {
-            get => itemSlots[index];
-        }
+        
+        
         public void Sort()
         {
             StackDuplicateItems();
             InventoryItem[] items = FindAllItems();
+            Debug.Log(items.Length);
             QuickSort(items, 0, items.Length - 1);
-            
+            EmptyInventory();
+            AddItemsToInventory(items);
+        }
+
+        private void AddItemsToInventory(InventoryItem[] items)
+        {
+            int pivot = 0;
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                if (pivot >= items.Length)
+                {
+                    break;
+                }
+                if (itemSlots[i].IsEmpty())
+                {
+                    itemSlots[i].SetItem(items[pivot]);
+                    pivot++;
+                }
+            }
         }
         public void EmptyInventory()
         {
             for (int i = 0; i < itemSlots.Length; i++)
             {
-                itemSlots[i].DiscardItem();
+                itemSlots[i].RemoveItem();
             }
         }
         public InventoryItem[] GetAllItemsAndEmptyInventory()
@@ -115,35 +117,35 @@ namespace Code
                 }
                 duplicateItems[itemId].Add(itemSlots[i].Item);
             }
-
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                int id = uniqueIds[i];
+                if (duplicateItems[uniqueIds[i]].Count < 2) continue;
                 
-                if (duplicateItems[id].Count < 2) continue;
-                
-                for (int y = 0; y < duplicateItems[id].Count; y++)
+                for (int y = 1; y < duplicateItems[uniqueIds[i]].Count; y++)
                 {
-                    StackItems(duplicateItems[id][y + 1], duplicateItems[id][y]);
+                    StackItems(duplicateItems[uniqueIds[i]][y], duplicateItems[uniqueIds[i]][y - 1]);
                 }
             }
         }
         private void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
         {
-            Debug.Assert(receivingItem.Id != receivingItem.Id, "Can't merge items with different ids");
-            
             int maxStackAmount = receivingItem.MaxStackAmount;
+
+            if (receivingItem.StackAmount >= maxStackAmount)
+            {
+                return;
+            }
+
             receivingItem.StackAmount += givingItem.StackAmount;
-            
             if (receivingItem.StackAmount > maxStackAmount)
             {
                 givingItem.StackAmount = receivingItem.StackAmount - maxStackAmount;
                 receivingItem.StackAmount = maxStackAmount;
             }
-
-            if (givingItem.StackAmount < 1)
+            else
             {
-                givingItem.ItemSlot.DiscardItem();
+                givingItem.StackAmount = 0;
+                givingItem.DetachFromItemSlot();
             }
         }
         private void QuickSort(InventoryItem[] items, int left, int right) //Technically QS shouldn't belong to Inventory
@@ -205,7 +207,26 @@ namespace Code
             {
                 SwapItems(from, to);
             }
-            to.SetItem(from.TakeItem());
+            to.SetItem(from.RemoveItem());
+        }
+        public void SetItemSlotsCount(int amount)
+        { 
+            ItemSlot[] newItemSlots = new ItemSlot[amount];
+            for (int i = 0; i < amount; i++)
+            {
+                if (i >= itemSlots.Length)
+                {
+                    break;
+                }
+                newItemSlots[i] = itemSlots[i];
+            }
+
+            int uninitializedPartOfArray = itemSlots.Length - 1;
+            if (uninitializedPartOfArray < amount - 1)
+            {
+                InitializeArray(newItemSlots, () => new ItemSlot(), uninitializedPartOfArray);
+            }
+            itemSlots = newItemSlots;
         }
     }
     
@@ -223,11 +244,12 @@ namespace Code
             private set => itemSlot = value;
         }
 
-        public InventoryItem(int id, int stackAmount, int maxStackAmount = 1000)
+        public InventoryItem(int id, int stackAmount, ItemSlot itemSlot, int maxStackAmount = 1000)
         {
             Id = id;
             StackAmount = stackAmount;
             MaxStackAmount = maxStackAmount;
+            ItemSlot = itemSlot;
         }
         public bool SetItemSlot(ItemSlot newItemSlot)
         {
@@ -246,6 +268,10 @@ namespace Code
 
         public void DetachFromItemSlot()
         {
+            if (itemSlot != null && !itemSlot.IsEmpty())
+            {
+                itemSlot.RemoveItem();
+            }
             itemSlot = null;
         }
     }
@@ -261,7 +287,7 @@ namespace Code
 
         public ItemSlot()
         {
-            item = new InventoryItem(UnityEngine.Random.Range(0, 15), 5);
+            item = new InventoryItem(1, 5, this);
         }
         public bool IsEmpty()
         {
@@ -279,7 +305,6 @@ namespace Code
             {
                 return false;
             }
-
             Item = newItem;
             if (newItem != null && newItem.ItemSlot != this)
             {
@@ -292,24 +317,18 @@ namespace Code
         //For derived members that has item requirements, example armor slots only allow armor items
         public virtual bool IsItemValid(InventoryItem item)
         {
-            Debug.Assert(item == null, "Item is null");
-            
             return true;
         }
         /// <summary>
         /// Returns item and empties the item slot.
         /// </summary>
-        public InventoryItem TakeItem()
+
+        public InventoryItem RemoveItem()
         {
-            InventoryItem takenItem = Item;
+            InventoryItem discardedItem = Item;
             Item = null;
-            return takenItem;
-        }
-        
-        public void DiscardItem()
-        {
-            Item.DetachFromItemSlot();
-            Item = null;
+            discardedItem?.DetachFromItemSlot();
+            return discardedItem;
         }
     }
 }

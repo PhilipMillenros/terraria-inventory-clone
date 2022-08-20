@@ -62,7 +62,7 @@ public class InventoryUI : MonoBehaviour
 
     private bool SortTest()
     {
-        GenericInventory testInventory = new GenericInventory(500);
+        GenericInventory testInventory = new GenericInventory(5);
         testInventory.Sort();
         for (int i = 1; i < testInventory.ItemSlotsCount; i++)
         {
@@ -70,6 +70,11 @@ public class InventoryUI : MonoBehaviour
             {
                 return false;
             }
+        }
+
+        for (int i = 0; i < testInventory.ItemSlotsCount; i++)
+        {
+           Debug.Log(testInventory[i]?.Item.StackAmount);
         }
         return true;
     } 
