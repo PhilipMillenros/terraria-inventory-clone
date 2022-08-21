@@ -40,12 +40,26 @@ namespace Code
         {
             StackDuplicateItems();
             InventoryItem[] items = FindAllItems();
-            Debug.Log(items.Length);
             QuickSort(items, 0, items.Length - 1);
-            EmptyInventory();
-            AddItemsToInventory(items);
+            MoveItemsCloseToFirstIndex(items);
         }
 
+        public void MoveItemsCloseToFirstIndex(InventoryItem[] items)
+        {
+            int itemIndex = 0;
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                if (itemIndex > items.Length - 1)
+                {
+                    break;
+                }
+                if (itemSlots[i].IsEmpty())
+                {
+                    itemSlots[i].SetItem(items[itemIndex]);
+                    itemIndex++;
+                }
+            }
+        }
         private void AddItemsToInventory(InventoryItem[] items)
         {
             int pivot = 0;
@@ -117,13 +131,20 @@ namespace Code
                 }
                 duplicateItems[itemId].Add(itemSlots[i].Item);
             }
+            
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                if (duplicateItems[uniqueIds[i]].Count < 2) continue;
-                
-                for (int y = 1; y < duplicateItems[uniqueIds[i]].Count; y++)
+                for (int j = 0; j < duplicateItems[uniqueIds[i]].Count; j++)
                 {
-                    StackItems(duplicateItems[uniqueIds[i]][y], duplicateItems[uniqueIds[i]][y - 1]);
+                    int index = j;
+                    int itemCount = duplicateItems[uniqueIds[i]].Count;
+                    
+                    InventoryItem givingItem = duplicateItems[uniqueIds[i]][index];
+                    while (givingItem.StackAmount > 0 && ++index < itemCount)
+                    {
+                        InventoryItem receivingItem = duplicateItems[uniqueIds[i]][index];
+                        StackItems(receivingItem, givingItem);
+                    }
                 }
             }
         }
@@ -257,7 +278,10 @@ namespace Code
             {
                 return false;
             }
-            
+            if (newItemSlot.Item != this)
+            {
+                newItemSlot.RemoveItem();
+            }
             ItemSlot = newItemSlot;
             if (ItemSlot.Item != this && newItemSlot != null)
             {
@@ -306,6 +330,10 @@ namespace Code
                 return false;
             }
             Item = newItem;
+            if (newItem.ItemSlot != this)
+            {
+                newItem.DetachFromItemSlot();
+            }
             if (newItem != null && newItem.ItemSlot != this)
             {
                 newItem.SetItemSlot(this);
