@@ -6,9 +6,7 @@ namespace Code
 {
     
     using System;
-    using System.Collections;
     using System.Collections.Generic;
-    using UnityEngine;
     public class GenericInventory
     {
         private ItemSlot[] itemSlots;
@@ -218,6 +216,10 @@ namespace Code
             itemSlot2.SetItem(temp);
         }
 
+        public void TransferItems(ItemSlot from, ItemSlot to, int amount)
+        {
+            from.TransferItems(to, amount);
+        }
         public bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
         {
             return itemSlot1.IsItemValid(itemSlot2.Item) && itemSlot2.IsItemValid(itemSlot1.Item);
@@ -248,115 +250,6 @@ namespace Code
                 InitializeArray(newItemSlots, () => new ItemSlot(), uninitializedPartOfArray);
             }
             itemSlots = newItemSlots;
-        }
-    }
-    
-
-    public class InventoryItem
-    {
-        public int Id { get; private set; }
-        public int StackAmount { get; set; }
-
-        public int MaxStackAmount { get; private set; }
-        private ItemSlot itemSlot;
-        public ItemSlot ItemSlot
-        {
-            get => itemSlot;
-            private set => itemSlot = value;
-        }
-
-        public InventoryItem(int id, int stackAmount, ItemSlot itemSlot, int maxStackAmount = 1000)
-        {
-            Id = id;
-            StackAmount = stackAmount;
-            MaxStackAmount = maxStackAmount;
-            ItemSlot = itemSlot;
-        }
-        public bool SetItemSlot(ItemSlot newItemSlot)
-        {
-            if (!newItemSlot.IsItemValid(this))
-            {
-                return false;
-            }
-            if (newItemSlot.Item != this)
-            {
-                newItemSlot.RemoveItem();
-            }
-            ItemSlot = newItemSlot;
-            if (ItemSlot.Item != this && newItemSlot != null)
-            {
-                newItemSlot.SetItem(this);
-            }
-            return true;
-        }
-
-        public void DetachFromItemSlot()
-        {
-            if (itemSlot != null && !itemSlot.IsEmpty())
-            {
-                itemSlot.RemoveItem();
-            }
-            itemSlot = null;
-        }
-    }
-    public class ItemSlot
-    {
-        private InventoryItem item;
-        public Action<InventoryItem> OnItemReceived;
-        public InventoryItem Item
-        {
-            get => item;
-            private set => item = value;
-        }
-
-        public ItemSlot()
-        {
-            item = new InventoryItem(1, 5, this);
-        }
-        public bool IsEmpty()
-        {
-            return Item == null;
-        }
-        
-        /// <summary>
-        /// Sets the inventory slot item, returns if the operation succeeded or not
-        /// </summary>
-        /// <param name="newItem"></param>
-        /// <returns></returns>
-        public bool SetItem(InventoryItem newItem)
-        {
-            if (!IsItemValid(newItem))
-            {
-                return false;
-            }
-            Item = newItem;
-            if (newItem.ItemSlot != this)
-            {
-                newItem.DetachFromItemSlot();
-            }
-            if (newItem != null && newItem.ItemSlot != this)
-            {
-                newItem.SetItemSlot(this);
-                OnItemReceived?.Invoke(newItem);
-            }
-            return true;
-        }
-        
-        //For derived members that has item requirements, example armor slots only allow armor items
-        public virtual bool IsItemValid(InventoryItem item)
-        {
-            return true;
-        }
-        /// <summary>
-        /// Returns item and empties the item slot.
-        /// </summary>
-
-        public InventoryItem RemoveItem()
-        {
-            InventoryItem discardedItem = Item;
-            Item = null;
-            discardedItem?.DetachFromItemSlot();
-            return discardedItem;
         }
     }
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class Weapon : Item
+public class Weapon : UIItem
 {
     
 }

@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEngine.UI;
 
 
-public class Tool : Item
+public class Tool : UIItem
 {
     
 }

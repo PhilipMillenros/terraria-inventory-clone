@@ -1,6 +1,6 @@
 ﻿
 
-public class ChestSlot : ItemSlot
+public class ChestSlot : UIItemSlot
 {
     
 }

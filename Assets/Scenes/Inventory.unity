@@ -232,9 +232,16 @@ MonoBehaviour:
   m_GameObject: {fileID: 567819220}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e495e8dc8b5310f4bace8b00927a7ff3, type: 3}
+  m_Script: {fileID: 11500000, guid: f846d0de6eec60f4f9c0c54c0cef5255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  rows: 0
+  columns: 0
+  inventorySlotPrefab: {fileID: 7909346932618019952, guid: adfa6703054c4ee47a26dacc2e2bba4a, type: 3}
+  offset: {x: 0, y: 0}
+  origin: {x: 0, y: 0}
+  width: 0
+  height: 0
 --- !u!4 &567819222
 Transform:
   m_ObjectHideFlags: 0

@@ -1,16 +1,71 @@
-using System.Collections;
 using System.Collections.Generic;
 using Code;
 using UnityEngine;
+using Quaternion = UnityEngine.Quaternion;
+using Vector2 = UnityEngine.Vector2;
+using Vector3 = UnityEngine.Vector3;
 
-public class InventoryUI : MonoBehaviour
+public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
 {
-    private GenericInventory inventory;
+    private T inventory;
+    [SerializeField] private int rows;
+    [SerializeField] private int columns;
+    [SerializeField] private GameObject inventorySlotPrefab;
+    [SerializeField] private Vector2 offset;
+    [SerializeField] private Vector2 origin;
+    [SerializeField] private float width;
+    [SerializeField] private float height;
+    private int inventorySlots;
+    private GameObject[] itemSlots;
+    private Canvas canvas;
+    [SerializeField] private List<UIItem> items;
+    
+
     void Start()
     {
+        canvas = GetComponent<Canvas>();
+        itemSlots = new GameObject[rows * columns];
         Tests();
+        SetupInventory();
     }
 
+    private void SetupInventory()
+    {
+        inventory = (T) new GenericInventory(rows * columns);
+        for (int i = 0; i < inventory.ItemSlotsCount; i++)
+        {
+            inventory[i].OnItemReceived += AddItem;
+            inventory[i].OnItemRemoved += RemoveItem;
+        }
+        for (int i = 0; i < rows * columns; i++)
+        {
+            itemSlots[i] = Instantiate(inventorySlotPrefab, GetItemSlotPosition(i),
+                Quaternion.identity, transform);
+            itemSlots[i].gameObject.AddComponent<ClickHandler>();
+        }
+    }
+
+    private void AddItem(InventoryItem item)
+    {
+        
+    }
+
+    public void RemoveItem()
+    {
+        
+    }
+    private Vector2 GetItemSlotPosition(int itemSlotIndex)
+    {
+        var pixelRect = canvas.pixelRect;
+        float canvasWidth = pixelRect.width;
+        float canvasHeight = pixelRect.height;
+        const int screenSizeConstant = 1000;
+        float screenSizeMultiplier = canvasWidth / screenSizeConstant;
+        
+        return new Vector2(itemSlotIndex % rows * offset.x * screenSizeMultiplier + origin.x * screenSizeMultiplier,
+            (itemSlotIndex / rows + 1) * -offset.y * screenSizeMultiplier - origin.y * screenSizeMultiplier +
+            canvasHeight);
+    }
     private void Tests()
     {
         Debug.Log("Initialization: " + (InitializeTest() ? "Passed" : "Failed"));
@@ -70,11 +125,6 @@ public class InventoryUI : MonoBehaviour
             {
                 return false;
             }
-        }
-
-        for (int i = 0; i < testInventory.ItemSlotsCount; i++)
-        {
-           Debug.Log(testInventory[i]?.Item?.StackAmount);
         }
         return true;
     } 

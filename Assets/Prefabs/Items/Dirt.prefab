@@ -145,7 +145,7 @@ GameObject:
   - component: {fileID: 4513697696645458286}
   - component: {fileID: 3854141815305684190}
   - component: {fileID: 3946574861162382594}
-  - component: {fileID: 8607188948042070586}
+  - component: {fileID: 8686666913253531303}
   m_Layer: 5
   m_Name: Dirt
   m_TagString: Untagged
@@ -211,7 +211,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &8607188948042070586
+--- !u!114 &8686666913253531303
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -220,13 +220,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 8711856426206628637}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 36cfeb74ac15c39429896898043cd730, type: 3}
+  m_Script: {fileID: 11500000, guid: d670f56ea3271f0469084f2238416ba8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   rarity: 0
   type: 0
-  quantity: 0
-  stackable: 1
+  stackAmount: 45
+  favorite: 0
   quantityText: {fileID: 5773592706861303769}
-  maxQuantity: 999
-  id: 3
+  MaxStack: 999
+  Id: 0

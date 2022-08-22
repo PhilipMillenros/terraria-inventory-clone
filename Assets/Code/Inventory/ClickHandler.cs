@@ -11,17 +11,14 @@ public class ClickHandler : MonoBehaviour, IPointerClickHandler, IPointerDownHan
     private bool minDelayAchieved;
     public void OnPointerClick(PointerEventData eventData)
     {
-        
-        bool leftClick = Input.GetMouseButtonUp(0);
-        if (leftClick && eventData.pointerClick.TryGetComponent(out ItemSlot itemSlot))
+        if (eventData.button == PointerEventData.InputButton.Left && eventData.pointerClick.TryGetComponent(out UIItemSlot itemSlot))
         {
             if (Input.GetKey(KeyCode.LeftAlt))
             {
                 itemSlot.ToggleFavorite();
                 return;
             }
-
-            PlayerCursor.Instance.Click(itemSlot, leftClick);
+            
         }
     }
     public void OnPointerDown(PointerEventData eventData)
@@ -30,7 +27,7 @@ public class ClickHandler : MonoBehaviour, IPointerClickHandler, IPointerDownHan
         isPressed = true;
         if (!leftClick)
         {
-            if (eventData.pointerEnter.TryGetComponent(out ItemSlot itemSlot))
+            if (eventData.pointerEnter.TryGetComponent(out UIItemSlot itemSlot))
             {
                 StopAllCoroutines();
                 minDelayAchieved = false;
@@ -42,14 +39,14 @@ public class ClickHandler : MonoBehaviour, IPointerClickHandler, IPointerDownHan
     {
         isPressed = false;
     }
-    IEnumerator WhileHolding(ItemSlot itemSlot, bool leftClick)
+    IEnumerator WhileHolding(UIItemSlot uiItemSlot, bool leftClick)
     {
         if (!isPressed)
         {
             delay = 0.2f;
             yield break;
         }
-        PlayerCursor.Instance.Click(itemSlot, leftClick);
+        
         yield return new WaitForSeconds(delay);
         if (!minDelayAchieved && delay > minDelay)
         {
@@ -61,6 +58,6 @@ public class ClickHandler : MonoBehaviour, IPointerClickHandler, IPointerDownHan
             minDelayAchieved = true;
         }
 
-        StartCoroutine(WhileHolding(itemSlot, leftClick));
+        StartCoroutine(WhileHolding(uiItemSlot, leftClick));
     }
 }

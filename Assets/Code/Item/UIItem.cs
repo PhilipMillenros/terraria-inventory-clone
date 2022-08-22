@@ -1,8 +1,9 @@
+using Code;
 using TMPro;
 using UnityEngine;
 
 
-public class Item : MonoBehaviour
+public class UIItem : MonoBehaviour
 {
     public enum Rarity { White, Green, Pink, Lime, Purple };
     public enum Type { Tile, Consumable, Furniture, Weapon, Tool, Equipable };
@@ -13,42 +14,6 @@ public class Item : MonoBehaviour
     [SerializeField] public bool stackable;
     [HideInInspector] public bool favorite;
     [SerializeField] TextMeshProUGUI quantityText;
-    
-    
-    public int maxQuantity = 999;
-    public int id;
-    public int Quantity
-    { 
-        get => quantity; 
-        private set
-        {
-            quantity = value;
-            quantityText.text = quantity == 1 ? "" : quantity.ToString();
-        }
-    }
-    
-    public void Stack(Item otherItem)
-    {
-        Quantity += otherItem.Quantity;
-        if (Quantity > maxQuantity)
-        {
-            otherItem.Quantity = Quantity - maxQuantity;
-            Quantity = maxQuantity;
-        }
-        else
-        {
-            otherItem.Quantity = 0;
-        }
-    }
-    public void AddQuantity(int value)
-    {
-        Quantity += value;
-    }
-
-    public void SetQuantity(int value)
-    {
-        Quantity = value;
-    }
     private void Start()
     {
         SetupQuantityText();
