@@ -10,10 +10,33 @@ public class UIItemSlot : MonoBehaviour
     [SerializeField] protected Sprite favoriteTexture;
     protected Image image;
     protected bool favorite;
-    public ItemSlot itemSlot;
+    private ItemSlot listenToItemSlot;
     protected void Awake()
     {
         image = GetComponent<Image>();
+        
+    }
+
+    public void ListenToItemSlot(ItemSlot newItemSlot)
+    {
+        if (listenToItemSlot != null)
+        {
+            listenToItemSlot.OnItemReceived -= SetItemDisplay;
+            listenToItemSlot.OnItemRemoved -= HideItem;
+        }
+        newItemSlot.OnItemReceived += SetItemDisplay; 
+        newItemSlot.OnItemRemoved += HideItem;
+        listenToItemSlot = newItemSlot;
+    }
+
+    private void SetItemDisplay(InventoryItem item)
+    {
+        storedUIItem.SetDisplay(image.transform.position, item.StackAmount, item.Id);
+    }
+
+    private void HideItem()
+    {
+        
     }
     public bool Favorite
     {
@@ -22,7 +45,7 @@ public class UIItemSlot : MonoBehaviour
     }
     public void ToggleFavorite()
     {
-        if (!itemSlot.IsEmpty())
+        if (!listenToItemSlot.IsEmpty())
         {
             favorite = !favorite;
             image.sprite = favorite ? favoriteTexture : normalTexture;

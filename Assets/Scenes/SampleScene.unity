@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0, g: 0, b: 0, a: 1}
+  m_IndirectSpecularColor: {r: 0.43447217, g: 0.47176063, b: 0.5091207, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -214,6 +214,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -321,6 +322,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -472,6 +474,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &265624362
 Canvas:
   m_ObjectHideFlags: 0
@@ -527,17 +530,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 265624359}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1e35204e1f9676d4fbae949114bc488b, type: 3}
+  m_Script: {fileID: 11500000, guid: f846d0de6eec60f4f9c0c54c0cef5255, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  height: 5
-  width: 10
+  rows: 10
+  columns: 5
+  inventorySlotPrefab: {fileID: 7909346932618019952, guid: 6f84758a10e50c542ba4d55420ba038b, type: 3}
   offset: {x: 40, y: 40}
   origin: {x: 40, y: 40}
-  inventorySlot: {fileID: 7909346932618019952, guid: 6f84758a10e50c542ba4d55420ba038b, type: 3}
-  _hotbarIndex: {fileID: 8269978672779817158, guid: 3503366e51d49c947ad8819bd70ad361, type: 3}
-  trashSlotPrefab: {fileID: 7909346932618019952, guid: a8a718024ef362c429edacf2d24a5bd0, type: 3}
-  titlePrefab: {fileID: 249530332761835078, guid: 180ab5e71a5df5e43a8d689f8366c2dd, type: 3}
+  width: 0
+  height: 0
+  items: []
 --- !u!1 &552922179
 GameObject:
   m_ObjectHideFlags: 0
@@ -585,7 +588,6 @@ GameObject:
   - component: {fileID: 821252785}
   - component: {fileID: 821252784}
   - component: {fileID: 821252783}
-  - component: {fileID: 821252782}
   m_Layer: 5
   m_Name: Chest (1)
   m_TagString: Untagged
@@ -612,24 +614,6 @@ RectTransform:
   m_AnchoredPosition: {x: 959.99994, y: 551.3044}
   m_SizeDelta: {x: 1920, y: 1102.6088}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &821252782
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 821252780}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f2ec003d36e78142b8ed876e5282ee7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  height: 5
-  width: 10
-  offset: {x: 40, y: 40}
-  origin: {x: 40, y: 285}
-  inventorySlot: {fileID: 7909346932618019952, guid: adfa6703054c4ee47a26dacc2e2bba4a, type: 3}
-  _hotbarIndex: {fileID: 0}
 --- !u!114 &821252783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -669,6 +653,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &821252785
 Canvas:
   m_ObjectHideFlags: 0
@@ -702,7 +687,6 @@ GameObject:
   - component: {fileID: 932927810}
   - component: {fileID: 932927809}
   - component: {fileID: 932927808}
-  - component: {fileID: 932927807}
   m_Layer: 5
   m_Name: Chest
   m_TagString: Untagged
@@ -710,24 +694,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 0
---- !u!114 &932927807
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 932927806}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f2ec003d36e78142b8ed876e5282ee7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  height: 5
-  width: 10
-  offset: {x: 40, y: 40}
-  origin: {x: 40, y: 285}
-  inventorySlot: {fileID: 7909346932618019952, guid: adfa6703054c4ee47a26dacc2e2bba4a, type: 3}
-  _hotbarIndex: {fileID: 0}
 --- !u!114 &932927808
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -767,6 +733,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
+  m_PresetInfoIsWorld: 0
 --- !u!223 &932927810
 Canvas:
   m_ObjectHideFlags: 0
@@ -981,6 +948,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_Navigation:
     m_Mode: 3
+    m_WrapAround: 0
     m_SelectOnUp: {fileID: 0}
     m_SelectOnDown: {fileID: 0}
     m_SelectOnLeft: {fileID: 0}
@@ -1010,7 +978,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 265624364}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
         m_MethodName: SortInventory
         m_Mode: 1
@@ -1157,7 +1125,7 @@ LightingSettings:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Settings.lighting
-  serializedVersion: 2
+  serializedVersion: 3
   m_GIWorkflowMode: 1
   m_EnableBakedLightmaps: 1
   m_EnableRealtimeLightmaps: 0
@@ -1196,7 +1164,7 @@ LightingSettings:
   m_PVREnvironmentReferencePointCount: 2048
   m_LightProbeSampleCountMultiplier: 4
   m_PVRBounces: 2
-  m_PVRRussianRouletteStartBounce: 2
+  m_PVRMinBounces: 1
   m_PVREnvironmentMIS: 0
   m_PVRFilteringMode: 2
   m_PVRDenoiserTypeDirect: 0
@@ -1315,7 +1283,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   favoriteCursor: {fileID: 21300000, guid: 03a5378c09db0da429f78dd91bafa058, type: 3}
   normalCursor: {fileID: 21300000, guid: b7971c3ac2db648498a3fbcaca7372c9, type: 3}
-  heldItem: {fileID: 0}
+  heldUIItem: {fileID: 0}
 --- !u!1 &2045715930
 GameObject:
   m_ObjectHideFlags: 0
@@ -1392,6 +1360,7 @@ Light:
   m_UseColorTemperature: 0
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
+  m_UseViewFrustumForShadowCasterCull: 1
   m_ShadowRadius: 0
   m_ShadowAngle: 0
 --- !u!4 &2045715932

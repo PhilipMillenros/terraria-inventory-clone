@@ -7,13 +7,12 @@ namespace Code
         private InventoryItem item;
         public Action<InventoryItem> OnItemReceived;
         public Action OnItemRemoved;
-
         public InventoryItem Item
         {
             get => item;
             private set => item = value;
         }
-
+        
         public ItemSlot()
         {
             item = new InventoryItem(1, 5, this);
@@ -91,7 +90,7 @@ namespace Code
             InventoryItem discardedItem = Item;
             Item = null;
             discardedItem?.DetachFromItemSlot();
-            OnItemRemoved.Invoke();
+            OnItemRemoved?.Invoke();
             return discardedItem;
         }
     }

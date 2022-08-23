@@ -16,15 +16,14 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     [SerializeField] private float width;
     [SerializeField] private float height;
     private int inventorySlots;
-    private GameObject[] itemSlots;
+    private UIItemSlot[] UIItemSlots;
     private Canvas canvas;
-    [SerializeField] private List<UIItem> items;
-    
+
 
     void Start()
     {
         canvas = GetComponent<Canvas>();
-        itemSlots = new GameObject[rows * columns];
+        
         Tests();
         SetupInventory();
     }
@@ -32,27 +31,13 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     private void SetupInventory()
     {
         inventory = (T) new GenericInventory(rows * columns);
-        for (int i = 0; i < inventory.ItemSlotsCount; i++)
-        {
-            inventory[i].OnItemReceived += AddItem;
-            inventory[i].OnItemRemoved += RemoveItem;
-        }
+        UIItemSlots = new UIItemSlot[rows * columns];
         for (int i = 0; i < rows * columns; i++)
         {
-            itemSlots[i] = Instantiate(inventorySlotPrefab, GetItemSlotPosition(i),
-                Quaternion.identity, transform);
-            itemSlots[i].gameObject.AddComponent<ClickHandler>();
+            UIItemSlots[i] = Instantiate(inventorySlotPrefab, GetItemSlotPosition(i),
+                Quaternion.identity, canvas.transform).GetComponent<UIItemSlot>();
+            UIItemSlots[i].ListenToItemSlot(inventory[i]);
         }
-    }
-
-    private void AddItem(InventoryItem item)
-    {
-        
-    }
-
-    public void RemoveItem()
-    {
-        
     }
     private Vector2 GetItemSlotPosition(int itemSlotIndex)
     {

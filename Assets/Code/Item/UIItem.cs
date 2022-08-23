@@ -5,15 +5,9 @@ using UnityEngine;
 
 public class UIItem : MonoBehaviour
 {
-    public enum Rarity { White, Green, Pink, Lime, Purple };
-    public enum Type { Tile, Consumable, Furniture, Weapon, Tool, Equipable };
-    
-    [SerializeField] public Rarity rarity = Rarity.White;
-    [SerializeField] public Type type;
     [SerializeField] private int quantity = 1;
-    [SerializeField] public bool stackable;
     [HideInInspector] public bool favorite;
-    [SerializeField] TextMeshProUGUI quantityText;
+    [SerializeField] TextMeshProUGUI itemStackText;
     private void Start()
     {
         SetupQuantityText();
@@ -22,11 +16,12 @@ public class UIItem : MonoBehaviour
 
     private void SetupQuantityText()
     {
-        if (!stackable)
-        {
-            return;
-        }
-        quantityText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
-        quantityText.text = quantity.ToString();
+        itemStackText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
+        itemStackText.text = quantity.ToString();
+    }
+
+    public void SetDisplay(Vector2 position, int stackAmount, int id)
+    {
+        
     }
 }
