@@ -1,4 +1,5 @@
 
+using System;
 using Code;
 using UnityEngine;
 using UnityEngine.UI;
@@ -15,6 +16,11 @@ public class UIItemSlot : MonoBehaviour
     {
         image = GetComponent<Image>();
         
+    }
+
+    private void Start()
+    {
+        Instantiate(storedUIItem, transform.position, Quaternion.identity, GetComponent<Canvas>().transform);
     }
 
     public void ListenToItemSlot(ItemSlot newItemSlot)
