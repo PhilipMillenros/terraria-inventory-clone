@@ -132,9 +132,9 @@ namespace Code
             
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                for (int j = 0; j < duplicateItems[uniqueIds[i]].Count; j++)
+                for (int y = 0; y < duplicateItems[uniqueIds[i]].Count; y++)
                 {
-                    int index = j;
+                    int index = y;
                     int itemCount = duplicateItems[uniqueIds[i]].Count;
                     
                     InventoryItem givingItem = duplicateItems[uniqueIds[i]][index];
