@@ -11,20 +11,25 @@ public class UIItem : MonoBehaviour
     [SerializeField] TextMeshProUGUI itemStackText;
     [SerializeField] private Image image;
     [SerializeField] private SpriteCollection ItemCollection;
-    private void Start()
+    private void Awake()
     {
         SetupQuantityText();
-        gameObject.AddComponent<CanvasGroup>().blocksRaycasts = false;
     }
 
     private void SetupQuantityText()
     {
         itemStackText = gameObject.GetComponentInChildren<TextMeshProUGUI>();
-        itemStackText.text = quantity.ToString();
     }
 
-    public void SetDisplay(Vector2 position, int stackAmount, int id)
+    public void DisplayItemValues(Vector2 position, int stackAmount, int id)
     {
-        image.sprite = ItemCollection.Sprites[0];
+        image.sprite = ItemCollection.Sprites[id];
+        transform.position = position;
+        SetItemStackCount(stackAmount);
+    }
+
+    private void SetItemStackCount(int value)
+    {
+        itemStackText.text = value.ToString();
     }
 }

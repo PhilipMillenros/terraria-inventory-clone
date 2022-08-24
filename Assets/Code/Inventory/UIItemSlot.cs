@@ -6,43 +6,53 @@ using UnityEngine.UI;
 
 public class UIItemSlot : MonoBehaviour
 {
-    public UIItem storedUIItem;
+    public GameObject UIItemPrefab;
+    private UIItem storedItem;
     [SerializeField] protected Sprite normalTexture;
     [SerializeField] protected Sprite favoriteTexture;
-    protected Image image;
     protected bool favorite;
-    private ItemSlot listenToItemSlot;
+    private ItemSlot displayedItemSlot;
     protected void Awake()
     {
-        image = GetComponent<Image>();
-        
     }
 
-    private void Start()
+    public void DisplayItemSlot(ItemSlot newItemSlot)
     {
-        Instantiate(storedUIItem, transform.position, Quaternion.identity, GetComponent<Canvas>().transform);
-    }
-
-    public void ListenToItemSlot(ItemSlot newItemSlot)
-    {
-        if (listenToItemSlot != null)
+        if (displayedItemSlot != null)
         {
-            listenToItemSlot.OnItemReceived -= SetItemDisplay;
-            listenToItemSlot.OnItemRemoved -= HideItem;
+            displayedItemSlot.OnItemReceived -= SetItemDisplay;
+            displayedItemSlot.OnItemRemoved -= HideItem;
         }
         newItemSlot.OnItemReceived += SetItemDisplay; 
         newItemSlot.OnItemRemoved += HideItem;
-        listenToItemSlot = newItemSlot;
+        displayedItemSlot = newItemSlot;
+        if (!newItemSlot.IsEmpty())
+        {
+            SetItemDisplay(newItemSlot.Item);
+        }
+        else
+        {
+            HideItem();
+        }
     }
 
     private void SetItemDisplay(InventoryItem item)
     {
-        storedUIItem.SetDisplay(image.transform.position, item.StackAmount, item.Id);
+        if (storedItem == null)
+        {
+            storedItem = Instantiate(UIItemPrefab, transform.position, Quaternion.identity, transform).GetComponent<UIItem>();
+        }
+
+        if (!displayedItemSlot.IsEmpty())
+        {
+            storedItem.enabled = true;
+            storedItem.DisplayItemValues(transform.position, item.StackAmount, item.Id);
+        }
     }
 
     private void HideItem()
     {
-        
+        storedItem.enabled = false;
     }
     public bool Favorite
     {
@@ -51,11 +61,10 @@ public class UIItemSlot : MonoBehaviour
     }
     public void ToggleFavorite()
     {
-        if (!listenToItemSlot.IsEmpty())
+        if (!displayedItemSlot.IsEmpty())
         {
             favorite = !favorite;
-            image.sprite = favorite ? favoriteTexture : normalTexture;
-            storedUIItem.favorite = favorite;
+            storedItem.favorite = favorite;
         }
     }
 }
