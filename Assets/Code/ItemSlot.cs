@@ -35,7 +35,7 @@ namespace Code
             {
                 return false;
             }
-            
+            item?.DetachFromItemSlot();
             Item = newItem;
             if (newItem.ItemSlot != this)
             {

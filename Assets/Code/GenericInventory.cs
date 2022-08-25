@@ -213,11 +213,8 @@ namespace Code
                 return;
             }
             InventoryItem temp = itemSlot1.Item;
-            Debug.Log(temp.StackAmount);
             itemSlot1.SetItem(itemSlot2.Item);
-            
             itemSlot2.SetItem(temp);
-            Debug.Log(temp.StackAmount);
         }
 
         public void TransferItems(ItemSlot from, ItemSlot to, int amount)
