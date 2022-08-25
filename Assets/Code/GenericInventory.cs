@@ -1,5 +1,6 @@
 ﻿
 using System.Runtime.CompilerServices;
+using UnityEngine;
 using UnityEngine.Analytics;
 
 namespace Code
@@ -36,7 +37,7 @@ namespace Code
         
         public void Sort()
         {
-            StackDuplicateItems();
+            StackAllDuplicateItems();
             InventoryItem[] items = FindAllItems();
             QuickSort(items, 0, items.Length - 1);
             MoveItemsCloseToFirstIndex(items);
@@ -113,7 +114,7 @@ namespace Code
             }
             return itemCount;
         }
-        public void StackDuplicateItems()
+        public void StackAllDuplicateItems()
         {
             var duplicateItems = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
@@ -134,13 +135,13 @@ namespace Code
             {
                 for (int y = 0; y < duplicateItems[uniqueIds[i]].Count; y++)
                 {
-                    int index = y;
+                    int pivot = y;
                     int itemCount = duplicateItems[uniqueIds[i]].Count;
                     
-                    InventoryItem givingItem = duplicateItems[uniqueIds[i]][index];
-                    while (givingItem.StackAmount > 0 && ++index < itemCount)
+                    InventoryItem givingItem = duplicateItems[uniqueIds[i]][pivot];
+                    while (givingItem.StackAmount > 0 && ++pivot < itemCount)
                     {
-                        InventoryItem receivingItem = duplicateItems[uniqueIds[i]][index];
+                        InventoryItem receivingItem = duplicateItems[uniqueIds[i]][pivot];
                         StackItems(receivingItem, givingItem);
                     }
                 }
@@ -205,22 +206,25 @@ namespace Code
             array[firstIndex] = array[secondIndex];
             array[secondIndex] = temp;
         }
-        public void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
+        public static void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
         {
             if (!IsSwapValid(itemSlot1, itemSlot2))
             {
                 return;
             }
             InventoryItem temp = itemSlot1.Item;
+            Debug.Log(temp.StackAmount);
             itemSlot1.SetItem(itemSlot2.Item);
+            
             itemSlot2.SetItem(temp);
+            Debug.Log(temp.StackAmount);
         }
 
         public void TransferItems(ItemSlot from, ItemSlot to, int amount)
         {
             from.TransferItems(to, amount);
         }
-        public bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
+        public static bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
         {
             return itemSlot1.IsItemValid(itemSlot2.Item) && itemSlot2.IsItemValid(itemSlot1.Item);
         }

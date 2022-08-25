@@ -35,7 +35,7 @@ namespace Code
             {
                 return false;
             }
-
+            
             Item = newItem;
             if (newItem.ItemSlot != this)
             {

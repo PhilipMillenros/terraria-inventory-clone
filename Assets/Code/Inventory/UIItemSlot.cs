@@ -2,19 +2,18 @@
 using System;
 using Code;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIItemSlot : MonoBehaviour
+public class UIItemSlot : MonoBehaviour, IPointerClickHandler
 {
     public GameObject UIItemPrefab;
     private UIItem storedItem;
     [SerializeField] protected Sprite normalTexture;
     [SerializeField] protected Sprite favoriteTexture;
     protected bool favorite;
-    private ItemSlot displayedItemSlot;
-    protected void Awake()
-    {
-    }
+    public ItemSlot displayedItemSlot;
+    public static event Action<ItemSlot> OnClickEvent;
 
     public void DisplayItemSlot(ItemSlot newItemSlot)
     {
@@ -45,14 +44,14 @@ public class UIItemSlot : MonoBehaviour
 
         if (!displayedItemSlot.IsEmpty())
         {
-            storedItem.enabled = true;
+            storedItem.gameObject.SetActive(true);
             storedItem.DisplayItemValues(transform.position, item.StackAmount, item.Id);
         }
     }
 
     private void HideItem()
     {
-        storedItem.enabled = false;
+        storedItem.gameObject.SetActive(false);
     }
     public bool Favorite
     {
@@ -66,5 +65,10 @@ public class UIItemSlot : MonoBehaviour
             favorite = !favorite;
             storedItem.favorite = favorite;
         }
+    }
+
+    public void OnPointerClick(PointerEventData eventData)
+    {
+        OnClickEvent.Invoke(displayedItemSlot);
     }
 }
