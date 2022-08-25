@@ -13,7 +13,7 @@ public class UIItemSlot : MonoBehaviour, IPointerClickHandler
     [SerializeField] protected Sprite favoriteTexture;
     protected bool favorite;
     public ItemSlot displayedItemSlot;
-    public static event Action<ItemSlot> OnClickEvent;
+    public static event Action<ItemSlot, PointerEventData> OnClickEvent;
 
     public void DisplayItemSlot(ItemSlot newItemSlot)
     {
@@ -69,6 +69,6 @@ public class UIItemSlot : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        OnClickEvent.Invoke(displayedItemSlot);
+        OnClickEvent.Invoke(displayedItemSlot, eventData);
     }
 }

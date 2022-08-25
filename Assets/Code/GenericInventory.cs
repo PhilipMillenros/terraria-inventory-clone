@@ -147,7 +147,7 @@ namespace Code
                 }
             }
         }
-        private void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
+        public static void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
         {
             int maxStackAmount = receivingItem.MaxStackAmount;
 
@@ -157,7 +157,7 @@ namespace Code
             }
 
             receivingItem.StackAmount += givingItem.StackAmount;
-            if (receivingItem.StackAmount > maxStackAmount)
+            if (receivingItem.StackAmount >= maxStackAmount)
             {
                 givingItem.StackAmount = receivingItem.StackAmount - maxStackAmount;
                 receivingItem.StackAmount = maxStackAmount;
@@ -167,6 +167,7 @@ namespace Code
                 givingItem.StackAmount = 0;
                 givingItem.DetachFromItemSlot();
             }
+            
         }
         private void QuickSort(InventoryItem[] items, int left, int right) //Technically QS shouldn't belong to Inventory
         {

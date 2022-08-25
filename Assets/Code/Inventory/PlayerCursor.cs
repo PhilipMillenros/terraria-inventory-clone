@@ -3,6 +3,7 @@ using System.Collections;
 using Code;
 using Code.Inventory;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
 
@@ -10,7 +11,7 @@ public class PlayerCursor : MonoBehaviour
 {
     [SerializeField] private Sprite favoriteCursor, normalCursor;
     [HideInInspector] public UIItemSlot mouseUIItemSlot;
-    
+    [SerializeField] private Transform itemOrigin;
     [SerializeField] private Image cursorImage;
     private static Vector3 _position;
     
@@ -59,7 +60,20 @@ public class PlayerCursor : MonoBehaviour
             cursorImage.sprite = normalCursor;
     }
 
-    private void OnItemSlotClick(ItemSlot itemSlotClicked)
+    private void OnItemSlotClick(ItemSlot itemSlotClicked, PointerEventData clickInfo)
+    {
+        if (clickInfo.button == PointerEventData.InputButton.Left)
+        {
+            LeftClickActions(itemSlotClicked);
+        }
+
+        if (clickInfo.button == PointerEventData.InputButton.Right)
+        {
+            RightClickActions(itemSlotClicked);
+        }
+    }
+
+    private void LeftClickActions(ItemSlot itemSlotClicked)
     {
         ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
         if (itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
@@ -71,8 +85,18 @@ public class PlayerCursor : MonoBehaviour
 
         if (!itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
         {
-            GenericInventory.SwapItems(itemSlotClicked, mouseItemSlot);
-            Debug.Log("Swapped");
+            if (itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
+            {
+                GenericInventory.StackItems(itemSlotClicked.Item, mouseItemSlot.Item);
+                Debug.Log("Stacked");
+            }
+            else
+            {
+                GenericInventory.SwapItems(itemSlotClicked, mouseItemSlot);
+                Debug.Log("Swapped");
+            }
+
+            
             return;
         }
 
@@ -82,5 +106,10 @@ public class PlayerCursor : MonoBehaviour
             Debug.Log("Taken");
             return;
         }
+    }
+
+    private void RightClickActions(ItemSlot itemSlotClicked)
+    {
+        
     }
 }

@@ -15,6 +15,7 @@
                     return;
                 }
                 stackAmount = value;
+                ItemSlot?.OnItemReceived?.Invoke(this);
             } 
         }
         public int MaxStackAmount { get; private set; }
@@ -24,7 +25,7 @@
             get => itemSlot;
             private set => itemSlot = value;
         }
-        public InventoryItem(int id, int stackAmount, ItemSlot itemSlot, int maxStackAmount = 1000)
+        public InventoryItem(int id, int stackAmount, ItemSlot itemSlot, int maxStackAmount = 999)
         {
             Id = id;
             StackAmount = stackAmount;

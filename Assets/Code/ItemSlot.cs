@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace Code
 {
@@ -16,14 +17,14 @@ namespace Code
         
         public ItemSlot()
         {
-            item = new InventoryItem(1, 5, this);
+            item = new InventoryItem(Random.Range(0, 3), Random.Range(0, 155), this);
         }
 
         public bool IsEmpty()
         {
             return Item == null;
         }
-
+        
         /// <summary>
         /// Sets the inventory slot item, returns if the operation succeeded or not
         /// </summary>
@@ -73,7 +74,7 @@ namespace Code
 
         private static bool StackIsGreaterThanMax(InventoryItem inventoryItem)
         {
-            return inventoryItem.StackAmount > inventoryItem.MaxStackAmount;
+            return inventoryItem.StackAmount >= inventoryItem.MaxStackAmount;
         }
 
         //For derived members that has item requirements, example armor slots only allow armor items
