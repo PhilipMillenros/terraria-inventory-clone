@@ -40,6 +40,7 @@ namespace Code
             StackAllDuplicateItems();
             InventoryItem[] items = FindAllItems();
             QuickSort(items, 0, items.Length - 1);
+            EmptyInventory();
             MoveItemsCloseToFirstIndex(items);
         }
 

@@ -17,7 +17,7 @@ namespace Code
         
         public ItemSlot()
         {
-            item = new InventoryItem(Random.Range(0, 3), Random.Range(0, 155), this);
+            item = new InventoryItem(Random.Range(0, 3), Random.Range(998, 999), this);
         }
 
         public bool IsEmpty()
