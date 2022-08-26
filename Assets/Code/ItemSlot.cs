@@ -52,29 +52,50 @@ namespace Code
             return true;
         }
 
-        public void TransferItems(ItemSlot toItemSlot, int amount)
+        public void TransferItems(ItemSlot receivingItemSlot, int amount)
         {
-            if (IsEmpty() && !toItemSlot.IsItemValid(item))
+            ItemSlot givingItemSlot = this;
+            if (!TransferIsValid(receivingItemSlot, givingItemSlot, amount))
             {
                 return;
             }
-
-            InventoryItem givingItem = item;
-            InventoryItem receivingItem = toItemSlot.Item;
-
-            givingItem.StackAmount -= amount;
-            receivingItem.StackAmount += amount;
-
-            if (StackIsGreaterThanMax(receivingItem))
+            if (receivingItemSlot.IsEmpty())
             {
-                givingItem.StackAmount += receivingItem.StackAmount - receivingItem.StackAmount;
-                receivingItem.StackAmount -= receivingItem.MaxStackAmount;
+                receivingItemSlot.SetItem(new InventoryItem(givingItemSlot.Item.Id, amount, receivingItemSlot));
+                givingItemSlot.Item.StackAmount -= amount;
             }
+            else
+            {
+                receivingItemSlot.item.StackAmount += amount;
+                givingItemSlot.Item.StackAmount -= amount;
+            }
+            
+        }
+        private bool TransferIsValid(ItemSlot receivingItemSlot, ItemSlot givingItemSlot, int amount)
+        {
+            if (givingItemSlot.IsEmpty())
+            {
+                return false;
+            }
+            if (!receivingItemSlot.IsEmpty() && givingItemSlot.Item.Id != receivingItemSlot.Item.Id)
+            {
+                return false;
+            }
+            
+            int giveAmount = givingItemSlot.Item.StackAmount + amount;
+            int totalAmountAfterTransfer = giveAmount + (receivingItemSlot.IsEmpty() ? 0 : receivingItemSlot.Item.StackAmount);
+            
+            int maxStackAmount = item.MaxStackAmount;
+            if (totalAmountAfterTransfer > maxStackAmount)
+            {
+                return false;
+            }
+            return true;
         }
 
         private static bool StackIsGreaterThanMax(InventoryItem inventoryItem)
         {
-            return inventoryItem.StackAmount >= inventoryItem.MaxStackAmount;
+            return inventoryItem.StackAmount > inventoryItem.MaxStackAmount;
         }
 
         //For derived members that has item requirements, example armor slots only allow armor items

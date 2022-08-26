@@ -13,18 +13,17 @@ public class PlayerCursor : MonoBehaviour
     [HideInInspector] public UIItemSlot mouseUIItemSlot;
     [SerializeField] private Transform itemOrigin;
     [SerializeField] private Image cursorImage;
-    private static Vector3 _position;
+    private Vector3 position;
     
-    private bool _holdingItem = false;
     private Transform heldItemOrigin;
-    public static Vector3 Position
+    public Vector3 Position
     {
         get
         {
-            _position = Input.mousePosition;
-            return _position;
+            position = Input.mousePosition;
+            return position;
         }
-        private set => _position = value;
+        private set => position = value;
     }
     private void Awake()
     {
@@ -36,7 +35,7 @@ public class PlayerCursor : MonoBehaviour
 
     private void SetupMouseItemSlot()
     {
-        mouseUIItemSlot = gameObject.GetComponent<UIItemSlot>();
+        mouseUIItemSlot = gameObject.GetComponentInChildren<UIItemSlot>();
         mouseUIItemSlot.DisplayItemSlot(new ItemSlot());
         UIItemSlot.OnClickEvent += OnItemSlotClick;
     }
@@ -50,6 +49,7 @@ public class PlayerCursor : MonoBehaviour
     private void SetCursorPosition()
     {
         transform.position = Position;
+        
     }
 
     private void SetCursorSprite()
@@ -69,7 +69,7 @@ public class PlayerCursor : MonoBehaviour
 
         if (clickInfo.button == PointerEventData.InputButton.Right)
         {
-            RightClickActions(itemSlotClicked, clickInfo);
+            RightClickActions(itemSlotClicked);
         }
     }
 
@@ -108,27 +108,27 @@ public class PlayerCursor : MonoBehaviour
         }
     }
 
-    private void RightClickActions(ItemSlot itemSlotClicked, PointerEventData clickInfo)
+    private void RightClickActions(ItemSlot itemSlotClicked)
     {
         ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
-        if (!itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
+        if (!itemSlotClicked.IsEmpty())
         {
-            if (itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
+            if (mouseItemSlot.IsEmpty() || itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
             {
-                StartCoroutine(RapidlyTransferItems(itemSlotClicked, clickInfo));
+                StartCoroutine(RapidlyTransferItems(itemSlotClicked));
             }
         }
     }
 
-    private IEnumerator RapidlyTransferItems(ItemSlot itemSlotClicked, PointerEventData clickInfo)
+    private IEnumerator RapidlyTransferItems(ItemSlot itemSlotClicked)
     {
         ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
-        float delay = 0.35f;
+        float delay = 0.3f;
         while (!itemSlotClicked.IsEmpty() && Input.GetMouseButton(1))
         {
             itemSlotClicked.TransferItems(mouseItemSlot, 1);
             yield return new WaitForSeconds(Mathf.Clamp(delay, 0.03f, 1));
-            delay -= 0.06f;
+            delay -= 0.05f;
         }
     }
 }
