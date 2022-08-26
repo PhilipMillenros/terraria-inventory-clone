@@ -61,7 +61,7 @@ namespace Code
             }
             if (receivingItemSlot.IsEmpty())
             {
-                receivingItemSlot.SetItem(new InventoryItem(givingItemSlot.Item.Id, amount, receivingItemSlot));
+                receivingItemSlot.SetItem(new InventoryItem(givingItemSlot.Item.Id, amount, null));
                 givingItemSlot.Item.StackAmount -= amount;
             }
             else
