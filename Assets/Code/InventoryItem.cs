@@ -9,12 +9,12 @@
             get => stackAmount; 
             set 
             {
+                stackAmount = value;
                 if (StackAmount < 1) 
                 {
                     DetachFromItemSlot();
                     return;
                 }
-                stackAmount = value;
                 ItemSlot?.OnItemReceived?.Invoke(this);
             } 
         }

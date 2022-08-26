@@ -69,7 +69,7 @@ public class PlayerCursor : MonoBehaviour
 
         if (clickInfo.button == PointerEventData.InputButton.Right)
         {
-            RightClickActions(itemSlotClicked);
+            RightClickActions(itemSlotClicked, clickInfo);
         }
     }
 
@@ -108,8 +108,27 @@ public class PlayerCursor : MonoBehaviour
         }
     }
 
-    private void RightClickActions(ItemSlot itemSlotClicked)
+    private void RightClickActions(ItemSlot itemSlotClicked, PointerEventData clickInfo)
     {
-        
+        ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
+        if (!itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
+        {
+            if (itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
+            {
+                StartCoroutine(RapidlyTransferItems(itemSlotClicked, clickInfo));
+            }
+        }
+    }
+
+    private IEnumerator RapidlyTransferItems(ItemSlot itemSlotClicked, PointerEventData clickInfo)
+    {
+        ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
+        float delay = 0.35f;
+        while (!itemSlotClicked.IsEmpty() && Input.GetMouseButton(1))
+        {
+            itemSlotClicked.TransferItems(mouseItemSlot, 1);
+            yield return new WaitForSeconds(Mathf.Clamp(delay, 0.03f, 1));
+            delay -= 0.06f;
+        }
     }
 }

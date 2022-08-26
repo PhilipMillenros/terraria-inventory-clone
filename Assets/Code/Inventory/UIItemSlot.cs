@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class UIItemSlot : MonoBehaviour, IPointerClickHandler
+public class UIItemSlot : MonoBehaviour, IPointerDownHandler
 {
     public GameObject UIItemPrefab;
     private UIItem storedItem;
@@ -66,8 +66,7 @@ public class UIItemSlot : MonoBehaviour, IPointerClickHandler
             storedItem.favorite = favorite;
         }
     }
-
-    public void OnPointerClick(PointerEventData eventData)
+    public void OnPointerDown(PointerEventData eventData)
     {
         OnClickEvent.Invoke(displayedItemSlot, eventData);
     }

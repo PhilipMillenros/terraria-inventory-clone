@@ -159,7 +159,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 152, y: -462}
+  m_AnchoredPosition: {x: 316.00006, y: -643}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &68478158
@@ -244,9 +244,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 68478161}
-        m_TargetAssemblyTypeName: ChestButton, Assembly-CSharp
-        m_MethodName: ToggleChest
+      - m_Target: {fileID: 265624364}
+        m_TargetAssemblyTypeName: InventoryUI`1[[Code.GenericInventory, Assembly-CSharp
+        m_MethodName: StackItems
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -305,7 +305,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 79, y: -462}
+  m_AnchoredPosition: {x: 243, y: -643}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &89903336
@@ -892,7 +892,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 228, y: -462}
+  m_AnchoredPosition: {x: 392.00006, y: -643}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1435849651
@@ -977,9 +977,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: Inventory, Assembly-CSharp
-        m_MethodName: SortInventory
+      - m_Target: {fileID: 265624364}
+        m_TargetAssemblyTypeName: InventoryUI`1[[Code.GenericInventory, Assembly-CSharp
+        m_MethodName: Sort
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
