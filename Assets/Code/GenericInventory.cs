@@ -89,7 +89,7 @@ namespace Code
             EmptyInventory();
             return items;
         }
-        private InventoryItem[] FindAllItems()
+        public InventoryItem[] FindAllItems()
         {
             int itemCount = OccupiedSlotsCount();
             
