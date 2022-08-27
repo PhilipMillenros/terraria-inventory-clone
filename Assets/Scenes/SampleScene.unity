@@ -549,6 +549,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 552922180}
+  - component: {fileID: 552922181}
   m_Layer: 5
   m_Name: Item Origin
   m_TagString: Untagged
@@ -575,6 +576,21 @@ RectTransform:
   m_AnchoredPosition: {x: 25, y: -25}
   m_SizeDelta: {x: 10, y: 10}
   m_Pivot: {x: 0.50000006, y: 0.49999994}
+--- !u!114 &552922181
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 552922179}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 70f85ec317dbc804daa75d13235d1ec0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  UIItemPrefab: {fileID: 8711856426206628637, guid: 9ba89b199bdb4bb4d90c25b5809f0b77, type: 3}
+  normalTexture: {fileID: 21300000, guid: f445ee159e574934da4d762148929ead, type: 3}
+  favoriteTexture: {fileID: 21300000, guid: ddba250f45652174bb856df536af3ca8, type: 3}
 --- !u!1 &821252780
 GameObject:
   m_ObjectHideFlags: 0
@@ -1191,7 +1207,6 @@ GameObject:
   - component: {fileID: 1913573908}
   - component: {fileID: 1913573907}
   - component: {fileID: 1913573909}
-  - component: {fileID: 1913573911}
   m_Layer: 5
   m_Name: Cursor
   m_TagString: Untagged
@@ -1286,21 +1301,6 @@ MonoBehaviour:
   mouseUIItemSlot: {fileID: 0}
   itemOrigin: {fileID: 552922180}
   cursorImage: {fileID: 1913573907}
---- !u!114 &1913573911
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1913573905}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 70f85ec317dbc804daa75d13235d1ec0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  UIItemPrefab: {fileID: 8711856426206628637, guid: 9ba89b199bdb4bb4d90c25b5809f0b77, type: 3}
-  normalTexture: {fileID: 21300000, guid: f445ee159e574934da4d762148929ead, type: 3}
-  favoriteTexture: {fileID: 21300000, guid: ddba250f45652174bb856df536af3ca8, type: 3}
 --- !u!1 &2045715930
 GameObject:
   m_ObjectHideFlags: 0
