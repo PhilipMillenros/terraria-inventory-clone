@@ -7,8 +7,10 @@ namespace Code
     public class ItemSlot
     {
         private InventoryItem item;
-        public Action<InventoryItem> OnItemReceived;
-        public Action OnItemRemoved;
+        public event Action OnItemRemoved;
+        public event Action<InventoryItem> OnItemValuesUpdated;
+        public event Action<InventoryItem> OnItemReceived;
+        
         public InventoryItem Item
         {
             get => item;
@@ -17,22 +19,26 @@ namespace Code
         
         public ItemSlot()
         {
-            item = new InventoryItem(Random.Range(0, 3), Random.Range(1, 400), this);
+            item = new InventoryItem(Random.Range(0, 3), Random.Range(988, 999), this);
         }
-
+        
         public bool IsEmpty()
         {
             return Item == null;
         }
-        
+
+        public void ItemValuesUpdated()
+        {
+            OnItemValuesUpdated?.Invoke(Item);
+        }
         /// <summary>
         /// Sets the inventory slot item, returns if the operation succeeded or not
         /// </summary>
         /// <param name="newItem"></param>
         /// <returns></returns>
-        public bool SetItem(InventoryItem newItem)
+        public bool HoldItem(InventoryItem newItem)
         {
-            if (!IsItemValid(newItem))
+            if (!FulfillsHoldRequirements(newItem))
             {
                 return false;
             }
@@ -42,13 +48,11 @@ namespace Code
             {
                 newItem.DetachFromItemSlot();
             }
-
             if (newItem != null && newItem.ItemSlot != this)
             {
                 newItem.SetItemSlot(this);
                 OnItemReceived?.Invoke(newItem);
             }
-
             return true;
         }
 
@@ -61,7 +65,7 @@ namespace Code
             }
             if (receivingItemSlot.IsEmpty())
             {
-                receivingItemSlot.SetItem(new InventoryItem(givingItemSlot.Item.Id, amount, null));
+                receivingItemSlot.HoldItem(new InventoryItem(givingItemSlot.Item.Id, amount, null));
                 givingItemSlot.Item.StackAmount -= amount;
             }
             else
@@ -69,7 +73,6 @@ namespace Code
                 receivingItemSlot.item.StackAmount += amount;
                 givingItemSlot.Item.StackAmount -= amount;
             }
-            
         }
         private bool TransferIsValid(ItemSlot receivingItemSlot, ItemSlot givingItemSlot, int amount)
         {
@@ -77,13 +80,17 @@ namespace Code
             {
                 return false;
             }
-            if (!receivingItemSlot.IsEmpty() && givingItemSlot.Item.Id != receivingItemSlot.Item.Id)
+            
+            if (!receivingItemSlot.IsEmpty() && !GenericInventory.ItemsIdMatches(givingItemSlot.Item, receivingItemSlot.Item))
             {
                 return false;
             }
-            
-            int giveAmount = givingItemSlot.Item.StackAmount + amount;
-            int totalAmountAfterTransfer = giveAmount + (receivingItemSlot.IsEmpty() ? 0 : receivingItemSlot.Item.StackAmount);
+
+            if (!givingItemSlot.FulfillsHoldRequirements(receivingItemSlot.Item) || !receivingItemSlot.FulfillsHoldRequirements(givingItemSlot.item))
+            {
+                return false;
+            }
+            int totalAmountAfterTransfer = amount + (receivingItemSlot.IsEmpty() ? 0 : receivingItemSlot.Item.StackAmount);
             
             int maxStackAmount = item.MaxStackAmount;
             if (totalAmountAfterTransfer > maxStackAmount)
@@ -98,12 +105,11 @@ namespace Code
             return inventoryItem.StackAmount > inventoryItem.MaxStackAmount;
         }
 
-        //For derived members that has item requirements, example armor slots only allow armor items
-        public virtual bool IsItemValid(InventoryItem item)
+        //Derived item slots might need item requirements, example: armor slots only allow armor items
+        public virtual bool FulfillsHoldRequirements(InventoryItem item)
         {
             return true;
         }
-
         /// <summary>
         /// Returns item and empties the item slot.
         /// </summary>

@@ -35,7 +35,7 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
         {
             UIItemSlots[i] = Instantiate(inventorySlotPrefab, GetItemSlotPosition(i),
                 Quaternion.identity, canvas.transform).GetComponent<UIItemSlot>();
-            UIItemSlots[i].DisplayItemSlot(inventory[i]);
+            UIItemSlots[i].VisualizeItemSlot(inventory[i]);
         }
     }
     private Vector2 GetItemSlotPosition(int itemSlotIndex)
@@ -71,7 +71,7 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     }
     public void StackItems()
     {
-        inventory.StackAllDuplicateItems();
+        inventory.StackAllNonFavoriteDuplicateItems();
         inventory.MoveItemsCloseToFirstIndex(inventory.FindAllItems());
     }
     public void Sort()

@@ -1,21 +1,15 @@
-using System;
 using System.Collections;
 using Code;
-using Code.Inventory;
 using UnityEngine;
 using UnityEngine.EventSystems;
-using UnityEngine.Serialization;
 using UnityEngine.UI;
 
 public class PlayerCursor : MonoBehaviour
 {
-    [SerializeField] private Sprite favoriteCursor, normalCursor;
+    [SerializeField] private Sprite favoriteCursorSprite, normalCursorSprite;
     [HideInInspector] public UIItemSlot mouseUIItemSlot;
-    [SerializeField] private Transform itemOrigin;
     [SerializeField] private Image cursorImage;
     private Vector3 position;
-    
-    private Transform heldItemOrigin;
     public Vector3 Position
     {
         get
@@ -28,7 +22,6 @@ public class PlayerCursor : MonoBehaviour
     private void Awake()
     {
         Cursor.visible = false;
-        heldItemOrigin = transform.GetChild(0);
         transform.SetAsLastSibling();
         SetupMouseItemSlot();
     }
@@ -36,7 +29,7 @@ public class PlayerCursor : MonoBehaviour
     private void SetupMouseItemSlot()
     {
         mouseUIItemSlot = gameObject.GetComponentInChildren<UIItemSlot>();
-        mouseUIItemSlot.DisplayItemSlot(new ItemSlot());
+        mouseUIItemSlot.VisualizeItemSlot(new ItemSlot());
         UIItemSlot.OnClickEvent += OnItemSlotClick;
     }
     private void Update()
@@ -55,62 +48,62 @@ public class PlayerCursor : MonoBehaviour
     private void SetCursorSprite()
     {
         if (Input.GetKey(KeyCode.LeftAlt))
-            cursorImage.sprite = favoriteCursor;
+            cursorImage.sprite = favoriteCursorSprite;
         else
-            cursorImage.sprite = normalCursor;
+            cursorImage.sprite = normalCursorSprite;
     }
 
     private void OnItemSlotClick(ItemSlot itemSlotClicked, PointerEventData clickInfo)
     {
+        if (Input.GetKey(KeyCode.LeftAlt))
+        {
+            itemSlotClicked.Item.ToggleFavorite();
+            return;
+        }
         if (clickInfo.button == PointerEventData.InputButton.Left)
         {
-            LeftClickActions(itemSlotClicked);
+            ItemSlotLeftClickActions(itemSlotClicked);
+            return;
         }
 
         if (clickInfo.button == PointerEventData.InputButton.Right)
         {
-            RightClickActions(itemSlotClicked);
+            ItemSlotRightClickActions(itemSlotClicked);
         }
     }
 
-    private void LeftClickActions(ItemSlot itemSlotClicked)
+    private void ItemSlotLeftClickActions(ItemSlot itemSlotClicked)
     {
-        ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
+        ItemSlot mouseItemSlot = mouseUIItemSlot.visualizedItemSlot;
         if (itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
         {
-            itemSlotClicked.SetItem(mouseItemSlot.Item);
-            Debug.Log("Given");
+            itemSlotClicked.HoldItem(mouseItemSlot.Item);
             return;
         }
 
         if (!itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
         {
-            if (itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
+            bool idIsMatching = itemSlotClicked.Item.Id == mouseItemSlot.Item.Id;
+            if (idIsMatching)
             {
                 GenericInventory.StackItems(itemSlotClicked.Item, mouseItemSlot.Item);
-                Debug.Log("Stacked");
             }
             else
             {
                 GenericInventory.SwapItems(itemSlotClicked, mouseItemSlot);
-                Debug.Log("Swapped");
             }
-
-            
             return;
         }
 
         if (!itemSlotClicked.IsEmpty() && mouseItemSlot.IsEmpty())
         {
-            mouseItemSlot.SetItem(itemSlotClicked.Item);
-            Debug.Log("Taken");
-            return;
+            mouseItemSlot.HoldItem(itemSlotClicked.Item);
         }
     }
 
-    private void RightClickActions(ItemSlot itemSlotClicked)
+    private void ItemSlotRightClickActions(ItemSlot itemSlotClicked)
     {
-        ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
+        ItemSlot mouseItemSlot = mouseUIItemSlot.visualizedItemSlot;
         if (!itemSlotClicked.IsEmpty())
         {
             if (mouseItemSlot.IsEmpty() || itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
@@ -119,10 +112,10 @@ public class PlayerCursor : MonoBehaviour
             }
         }
     }
-
+    
     private IEnumerator RapidlyTransferItems(ItemSlot itemSlotClicked)
     {
-        ItemSlot mouseItemSlot = mouseUIItemSlot.displayedItemSlot;
+        ItemSlot mouseItemSlot = mouseUIItemSlot.visualizedItemSlot;
         float delay = 0.3f;
         while (!itemSlotClicked.IsEmpty() && Input.GetMouseButton(1))
         {

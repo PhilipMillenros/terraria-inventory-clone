@@ -1,9 +1,13 @@
-﻿namespace Code
+﻿using System;
+
+namespace Code
 {
     public class InventoryItem
     {
         public int Id { get; private set; }
         private int stackAmount = 1;
+        private bool favorite = false;
+        
         public int StackAmount 
         { 
             get => stackAmount; 
@@ -15,11 +19,12 @@
                     DetachFromItemSlot();
                     return;
                 }
-                ItemSlot?.OnItemReceived?.Invoke(this);
+                ItemSlot?.ItemValuesUpdated();
             } 
         }
         public int MaxStackAmount { get; private set; }
         private ItemSlot itemSlot;
+        public Action OnItemUpdated;
         public ItemSlot ItemSlot
         {
             get => itemSlot;
@@ -32,10 +37,23 @@
             MaxStackAmount = maxStackAmount;
             ItemSlot = itemSlot;
         }
+        public bool IsFavorite()
+        {
+            return favorite;
+        }
+        public void SetFavorite(bool value)
+        {
+            favorite = value;
+            ItemSlot?.ItemValuesUpdated();
+        }
+        public void ToggleFavorite()
+        {
+            SetFavorite(!favorite);
+        }
         
         public bool SetItemSlot(ItemSlot newItemSlot)
         {
-            if (!newItemSlot.IsItemValid(this))
+            if (!newItemSlot.FulfillsHoldRequirements(this))
             {
                 return false;
             }
@@ -46,7 +64,7 @@
             ItemSlot = newItemSlot;
             if (ItemSlot.Item != this && newItemSlot != null)
             {
-                newItemSlot.SetItem(this);
+                newItemSlot.HoldItem(this);
             }
             return true;
         }

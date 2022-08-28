@@ -9,25 +9,27 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
 {
     public GameObject UIItemPrefab;
     private UIItem storedItem;
-    [SerializeField] protected Sprite normalTexture;
-    [SerializeField] protected Sprite favoriteTexture;
-    protected bool favorite;
-    public ItemSlot displayedItemSlot;
+    [SerializeField] protected Sprite normalItemSlotSprite;
+    [SerializeField] protected Sprite favoriteItemSlotSprite;
+    private bool favorite;
+    public ItemSlot visualizedItemSlot;
     public static event Action<ItemSlot, PointerEventData> OnClickEvent;
+    private Image itemSlotImage;
 
-    public void DisplayItemSlot(ItemSlot newItemSlot)
+
+    private void Awake()
     {
-        if (displayedItemSlot != null)
-        {
-            displayedItemSlot.OnItemReceived -= SetItemDisplay;
-            displayedItemSlot.OnItemRemoved -= HideItem;
-        }
-        newItemSlot.OnItemReceived += SetItemDisplay; 
-        newItemSlot.OnItemRemoved += HideItem;
-        displayedItemSlot = newItemSlot;
+        itemSlotImage = GetComponent<Image>();
+    }
+
+    public void VisualizeItemSlot(ItemSlot newItemSlot)
+    {
+        UnsubscribePreviousItemSlot();
+        visualizedItemSlot = newItemSlot;
+        ListenToNewItemSlot(newItemSlot);
         if (!newItemSlot.IsEmpty())
         {
-            SetItemDisplay(newItemSlot.Item);
+            UpdateHeldItemVisuals(newItemSlot.Item);
         }
         else
         {
@@ -35,23 +37,68 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
         }
     }
 
-    private void SetItemDisplay(InventoryItem item)
+    private void UnsubscribePreviousItemSlot()
     {
+        if (visualizedItemSlot != null)
+        {
+            visualizedItemSlot.OnItemReceived -= UpdateHeldItemVisuals;
+            visualizedItemSlot.OnItemRemoved -= HideItem;
+            visualizedItemSlot.OnItemValuesUpdated -= VisualizeItemValues;
+        }
+    }
+
+    private void ListenToNewItemSlot(ItemSlot newItemSlot)
+    {
+        newItemSlot.OnItemReceived += UpdateHeldItemVisuals; 
+        newItemSlot.OnItemRemoved += HideItem;
+        newItemSlot.OnItemValuesUpdated += VisualizeItemValues;
+    }
+    
+    private void UpdateHeldItemVisuals(InventoryItem item)
+    {
+        if (visualizedItemSlot == null)
+        {
+            return;
+        }
         if (storedItem == null)
         {
             storedItem = Instantiate(UIItemPrefab, transform.position, Quaternion.identity, transform).GetComponent<UIItem>();
         }
+        VisualizeItemValues(item);
+        UpdateItemSlotVisuals();
+    }
 
-        if (!displayedItemSlot.IsEmpty())
+    private void VisualizeItemValues(InventoryItem item)
+    {
+        if (!visualizedItemSlot.IsEmpty())
         {
             storedItem.gameObject.SetActive(true);
             storedItem.DisplayItemValues(transform.position, item.StackAmount, item.Id);
+            
         }
+        UpdateItemSlotVisuals();
     }
 
+    
     private void HideItem()
     {
         storedItem.gameObject.SetActive(false);
+        UpdateItemSlotVisuals();
+    }
+    private void UpdateItemSlotVisuals()
+    {
+        if (itemSlotImage == null)
+        {
+            return;
+        }
+        if (!visualizedItemSlot.IsEmpty())
+        {
+            itemSlotImage.sprite = visualizedItemSlot.Item.IsFavorite() ? favoriteItemSlotSprite : normalItemSlotSprite;
+        }
+        else
+        {
+            itemSlotImage.sprite = normalItemSlotSprite;
+        }
     }
     public bool Favorite
     {
@@ -60,7 +107,7 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
     }
     public void ToggleFavorite()
     {
-        if (!displayedItemSlot.IsEmpty())
+        if (!visualizedItemSlot.IsEmpty())
         {
             favorite = !favorite;
             storedItem.favorite = favorite;
@@ -68,6 +115,6 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        OnClickEvent.Invoke(displayedItemSlot, eventData);
+        OnClickEvent?.Invoke(visualizedItemSlot, eventData);
     }
 }

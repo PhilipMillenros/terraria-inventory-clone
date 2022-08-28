@@ -33,17 +33,22 @@ namespace Code
                 array[i] = provider();
             }
         }
-        
-        
         public void Sort()
         {
-            StackAllDuplicateItems();
-            InventoryItem[] items = FindAllItems();
+            StackAllNonFavoriteDuplicateItems();
+            InventoryItem[] items = FindNonFavoriteItems();
             QuickSort(items, 0, items.Length - 1);
-            EmptyInventory();
+            DetachItems(items);
             MoveItemsCloseToFirstIndex(items);
         }
 
+        private void DetachItems(InventoryItem[] items)
+        {
+            for (int i = 0; i < items.Length; i++)
+            {
+                items[i].DetachFromItemSlot();
+            }
+        }
         public void MoveItemsCloseToFirstIndex(InventoryItem[] items)
         {
             int itemIndex = 0;
@@ -55,10 +60,15 @@ namespace Code
                 }
                 if (itemSlots[i].IsEmpty())
                 {
-                    itemSlots[i].SetItem(items[itemIndex]);
+                    itemSlots[i].HoldItem(items[itemIndex]);
                     itemIndex++;
                 }
             }
+        }
+
+        public static bool ItemsIdMatches(InventoryItem item1, InventoryItem item2)
+        {
+            return item1.Id == item2.Id;
         }
         private void AddItemsToInventory(InventoryItem[] items)
         {
@@ -71,7 +81,7 @@ namespace Code
                 }
                 if (itemSlots[i].IsEmpty())
                 {
-                    itemSlots[i].SetItem(items[pivot]);
+                    itemSlots[i].HoldItem(items[pivot]);
                     pivot++;
                 }
             }
@@ -80,7 +90,10 @@ namespace Code
         {
             for (int i = 0; i < itemSlots.Length; i++)
             {
-                itemSlots[i].RemoveItem();
+                if (!itemSlots[i].IsEmpty() && !itemSlots[i].Item.IsFavorite())
+                {
+                    itemSlots[i].RemoveItem();
+                }
             }
         }
         public InventoryItem[] GetAllItemsAndEmptyInventory()
@@ -91,7 +104,7 @@ namespace Code
         }
         public InventoryItem[] FindAllItems()
         {
-            int itemCount = OccupiedSlotsCount();
+            int itemCount = ItemsCount();
             
             InventoryItem[] items = new InventoryItem[itemCount];
             int pivot = 0;
@@ -106,7 +119,7 @@ namespace Code
             return items;
         }
 
-        private int OccupiedSlotsCount()
+        public int ItemsCount()
         {
             int itemCount = 0;
             for (int i = 0; i < itemSlots.Length; i++)
@@ -115,14 +128,45 @@ namespace Code
             }
             return itemCount;
         }
-        public void StackAllDuplicateItems()
+        public int NonFavoriteItemsCount()
+        {
+            int itemCount = 0;
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                if (!itemSlots[i].IsEmpty())
+                {
+                    itemCount += itemSlots[i].Item.IsFavorite() ? 0 : 1;
+                }
+            }
+            return itemCount;
+        }
+        public InventoryItem[] FindNonFavoriteItems()
+        {
+            int itemCount = NonFavoriteItemsCount();
+            
+            InventoryItem[] items = new InventoryItem[itemCount];
+            int pivot = 0;
+            for (int i = 0; i < itemSlots.Length; i++)
+            {
+                if (!itemSlots[i].IsEmpty() && !itemSlots[i].Item.IsFavorite())
+                {
+                    items[pivot] = itemSlots[i].Item;
+                    pivot++;
+                }
+            }
+            return items;
+        }
+        public void StackAllNonFavoriteDuplicateItems()
         {
             var duplicateItems = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
             for (int i = 0; i < itemSlots.Length; i++)
             {
-                if (itemSlots[i].IsEmpty()) continue;
-
+                if (itemSlots[i].IsEmpty() || itemSlots[i].Item.IsFavorite())
+                {
+                    continue;
+                }
+                
                 int itemId = itemSlots[i].Item.Id;
                 if (!duplicateItems.ContainsKey(itemId))
                 {
@@ -215,8 +259,8 @@ namespace Code
                 return;
             }
             InventoryItem temp = itemSlot1.Item;
-            itemSlot1.SetItem(itemSlot2.Item);
-            itemSlot2.SetItem(temp);
+            itemSlot1.HoldItem(itemSlot2.Item);
+            itemSlot2.HoldItem(temp);
         }
 
         public void TransferItems(ItemSlot from, ItemSlot to, int amount)
@@ -225,7 +269,7 @@ namespace Code
         }
         public static bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
         {
-            return itemSlot1.IsItemValid(itemSlot2.Item) && itemSlot2.IsItemValid(itemSlot1.Item);
+            return itemSlot1.FulfillsHoldRequirements(itemSlot2.Item) && itemSlot2.FulfillsHoldRequirements(itemSlot1.Item);
         }
         public void MoveItem(ItemSlot from, ItemSlot to)
         {
@@ -233,7 +277,7 @@ namespace Code
             {
                 SwapItems(from, to);
             }
-            to.SetItem(from.RemoveItem());
+            to.HoldItem(from.RemoveItem());
         }
         public void SetItemSlotsCount(int amount)
         { 
