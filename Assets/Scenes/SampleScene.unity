@@ -589,8 +589,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UIItemPrefab: {fileID: 8711856426206628637, guid: 9ba89b199bdb4bb4d90c25b5809f0b77, type: 3}
-  normalTexture: {fileID: 21300000, guid: f445ee159e574934da4d762148929ead, type: 3}
-  favoriteTexture: {fileID: 21300000, guid: ddba250f45652174bb856df536af3ca8, type: 3}
+  normalItemSlotSprite: {fileID: 0}
+  favoriteItemSlotSprite: {fileID: 0}
 --- !u!1 &821252780
 GameObject:
   m_ObjectHideFlags: 0
@@ -825,7 +825,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.5283019, g: 0.5283019, b: 0.5283019, a: 0}
+  m_BackGroundColor: {r: 0.46497867, g: 0.56049466, b: 0.764151, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
   m_FOVAxisMode: 0
@@ -1047,12 +1047,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bac5532658ca8394cae13a6af687b160, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  items:
-  - {fileID: 8607188948042070586, guid: 2c7fea92ff418e64eaaa531d6103116e, type: 3}
-  - {fileID: -8372541187275843368, guid: b0035cb9e624bf64c8be42005016dfcb, type: 3}
-  - {fileID: -8372541187275843368, guid: ebda14b18c120e34fb1f2724012ed7a6, type: 3}
-  - {fileID: 8607188948042070586, guid: 9ba89b199bdb4bb4d90c25b5809f0b77, type: 3}
-  - {fileID: 8607188948042070586, guid: d5b324e3b952ee847a96073b68ff65c9, type: 3}
 --- !u!4 &1460222844
 Transform:
   m_ObjectHideFlags: 0
@@ -1296,10 +1290,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e48c747ae1b35c8478737f9b156ea204, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  favoriteCursor: {fileID: 21300000, guid: 03a5378c09db0da429f78dd91bafa058, type: 3}
-  normalCursor: {fileID: 21300000, guid: b7971c3ac2db648498a3fbcaca7372c9, type: 3}
+  favoriteCursorSprite: {fileID: 21300000, guid: 03a5378c09db0da429f78dd91bafa058, type: 3}
+  normalCursorSprite: {fileID: 21300000, guid: b7971c3ac2db648498a3fbcaca7372c9, type: 3}
   mouseUIItemSlot: {fileID: 0}
-  itemOrigin: {fileID: 552922180}
   cursorImage: {fileID: 1913573907}
 --- !u!1 &2045715930
 GameObject:

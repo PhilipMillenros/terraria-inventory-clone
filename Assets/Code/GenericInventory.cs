@@ -35,7 +35,7 @@ namespace Code
         }
         public void Sort()
         {
-            StackAllNonFavoriteDuplicateItems();
+            StackNonFavoriteDuplicateItems();
             InventoryItem[] items = FindNonFavoriteItems();
             QuickSort(items, 0, items.Length - 1);
             DetachItems(items);
@@ -156,10 +156,11 @@ namespace Code
             }
             return items;
         }
-        public void StackAllNonFavoriteDuplicateItems()
+        public void StackNonFavoriteDuplicateItems()
         {
             var duplicateItems = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
+            
             for (int i = 0; i < itemSlots.Length; i++)
             {
                 if (itemSlots[i].IsEmpty() || itemSlots[i].Item.IsFavorite())
@@ -175,22 +176,41 @@ namespace Code
                 }
                 duplicateItems[itemId].Add(itemSlots[i].Item);
             }
+
             
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                for (int y = 0; y < duplicateItems[uniqueIds[i]].Count; y++)
+                int stackSum = GetStackSum(duplicateItems[uniqueIds[i]]);
+                int maxStack = duplicateItems[uniqueIds[i]][0].MaxStackAmount;
+                int fullStacksCount = stackSum / maxStack;
+                int stackRemainder = stackSum % maxStack;
+                List<InventoryItem> items = duplicateItems[uniqueIds[i]];
+                int length = items.Count;
+                for (int y = 0; y < length; y++)
                 {
-                    int pivot = y;
-                    int itemCount = duplicateItems[uniqueIds[i]].Count;
-                    
-                    InventoryItem givingItem = duplicateItems[uniqueIds[i]][pivot];
-                    while (givingItem.StackAmount > 0 && ++pivot < itemCount)
+                    if (fullStacksCount > 0)
                     {
-                        InventoryItem receivingItem = duplicateItems[uniqueIds[i]][pivot];
-                        StackItems(receivingItem, givingItem);
+                        items[i].StackAmount = maxStack;
+                    }
+                    else if(stackRemainder > 0)
+                    {
+                        items[i].StackAmount = stackRemainder;
+                    }
+                    else
+                    {
+                        items.RemoveAt(i);
                     }
                 }
             }
+        }
+        private int GetStackSum(List<InventoryItem> items)
+        {
+            int sum = 0;
+            for (int i = 0; i < items.Count; i++)
+            {
+                sum += items[i].StackAmount;
+            }
+            return sum;
         }
         public static void StackItems(InventoryItem receivingItem, InventoryItem givingItem)
         {
