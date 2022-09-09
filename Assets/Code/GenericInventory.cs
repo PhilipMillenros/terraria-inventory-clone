@@ -158,7 +158,7 @@ namespace Code
         }
         public void StackNonFavoriteDuplicateItems()
         {
-            var duplicateItems = new Dictionary<int, List<InventoryItem>>();
+            var itemLists = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
             
             for (int i = 0; i < itemSlots.Length; i++)
@@ -169,36 +169,38 @@ namespace Code
                 }
                 
                 int itemId = itemSlots[i].Item.Id;
-                if (!duplicateItems.ContainsKey(itemId))
+                if (!itemLists.ContainsKey(itemId))
                 {
-                    duplicateItems.Add(itemId, new List<InventoryItem>());
+                    itemLists.Add(itemId, new List<InventoryItem>());
                     uniqueIds.Add(itemId);
                 }
-                duplicateItems[itemId].Add(itemSlots[i].Item);
+                itemLists[itemId].Add(itemSlots[i].Item);
             }
-
             
             for (int i = 0; i < uniqueIds.Count; i++)
             {
-                int stackSum = GetStackSum(duplicateItems[uniqueIds[i]]);
-                int maxStack = duplicateItems[uniqueIds[i]][0].MaxStackAmount;
+                int stackSum = GetStackSum(itemLists[uniqueIds[i]]);
+                int maxStack = itemLists[uniqueIds[i]][0].MaxStackAmount;
                 int fullStacksCount = stackSum / maxStack;
                 int stackRemainder = stackSum % maxStack;
-                List<InventoryItem> items = duplicateItems[uniqueIds[i]];
-                int length = items.Count;
+                List<InventoryItem> duplicates = itemLists[uniqueIds[i]];
+                
+                int length = duplicates.Count;
                 for (int y = 0; y < length; y++)
                 {
                     if (fullStacksCount > 0)
                     {
-                        items[i].StackAmount = maxStack;
+                        duplicates[y].StackAmount = maxStack;
+                        fullStacksCount--;
                     }
                     else if(stackRemainder > 0)
                     {
-                        items[i].StackAmount = stackRemainder;
+                        duplicates[y].StackAmount = stackRemainder;
+                        stackRemainder -= stackRemainder;
                     }
                     else
                     {
-                        items.RemoveAt(i);
+                        duplicates[y].DetachFromItemSlot();
                     }
                 }
             }
