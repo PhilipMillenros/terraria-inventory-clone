@@ -136,6 +136,8 @@ GameObject:
   - component: {fileID: 68478160}
   - component: {fileID: 68478159}
   - component: {fileID: 68478158}
+  - component: {fileID: 68478162}
+  - component: {fileID: 68478163}
   m_Layer: 0
   m_Name: Chest Button (1)
   m_TagString: Untagged
@@ -159,7 +161,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 316.00006, y: -643}
+  m_AnchoredPosition: {x: 1061, y: -202}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &68478158
@@ -244,9 +246,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 265624364}
-        m_TargetAssemblyTypeName: InventoryUI`1[[Code.GenericInventory, Assembly-CSharp
-        m_MethodName: StackItems
+      - m_Target: {fileID: 68478161}
+        m_TargetAssemblyTypeName: ChestButton, Assembly-CSharp
+        m_MethodName: ToggleChest
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -268,7 +270,42 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b0982d7eb63a240b8b972bef3672a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chest: {fileID: 821252780}
+  chestUIManager: {fileID: 265624365}
+  chest: {fileID: 89903340}
+--- !u!114 &68478162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68478156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 89b0982d7eb63a240b8b972bef3672a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chestUIManager: {fileID: 265624365}
+  chest: {fileID: 89903340}
+--- !u!114 &68478163
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 68478156}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb0d288fb39d1404cb3c297a06254abe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rows: 10
+  columns: 5
+  inventorySlotPrefab: {fileID: 7909346932618019952, guid: e7f489328ca12174194811a7006a3498, type: 3}
+  offset: {x: 40, y: 40}
+  origin: {x: 40, y: 350}
+  width: 0
+  height: 0
+  canvas: {fileID: 265624362}
 --- !u!1 &89903334
 GameObject:
   m_ObjectHideFlags: 0
@@ -282,6 +319,7 @@ GameObject:
   - component: {fileID: 89903336}
   - component: {fileID: 89903339}
   - component: {fileID: 89903338}
+  - component: {fileID: 89903340}
   m_Layer: 0
   m_Name: Chest Button
   m_TagString: Untagged
@@ -305,7 +343,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 243, y: -643}
+  m_AnchoredPosition: {x: 988, y: -202}
   m_SizeDelta: {x: 30, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &89903336
@@ -376,7 +414,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b0982d7eb63a240b8b972bef3672a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  chest: {fileID: 932927806}
+  chestUIManager: {fileID: 265624365}
+  chest: {fileID: 89903340}
 --- !u!114 &89903338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -415,6 +454,26 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 89903334}
   m_CullTransparentMesh: 0
+--- !u!114 &89903340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 89903334}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cb0d288fb39d1404cb3c297a06254abe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  rows: 10
+  columns: 5
+  inventorySlotPrefab: {fileID: 7909346932618019952, guid: e7f489328ca12174194811a7006a3498, type: 3}
+  offset: {x: 40, y: 40}
+  origin: {x: 40, y: 350}
+  width: 0
+  height: 0
+  canvas: {fileID: 265624362}
 --- !u!1 &265624359
 GameObject:
   m_ObjectHideFlags: 0
@@ -428,6 +487,7 @@ GameObject:
   - component: {fileID: 265624361}
   - component: {fileID: 265624360}
   - component: {fileID: 265624364}
+  - component: {fileID: 265624365}
   m_Layer: 5
   m_Name: Inventory
   m_TagString: Untagged
@@ -540,6 +600,19 @@ MonoBehaviour:
   origin: {x: 40, y: 40}
   width: 0
   height: 0
+  canvas: {fileID: 265624362}
+--- !u!114 &265624365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 265624359}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec846c8813940994caf7ba8c45fe3d92, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &552922179
 GameObject:
   m_ObjectHideFlags: 0
@@ -908,7 +981,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
-  m_AnchoredPosition: {x: 392.00006, y: -643}
+  m_AnchoredPosition: {x: 1137, y: -202}
   m_SizeDelta: {x: 32, y: 32}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1435849651
@@ -1017,6 +1090,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 89b0982d7eb63a240b8b972bef3672a3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  chestUIManager: {fileID: 0}
   chest: {fileID: 932927806}
 --- !u!1 &1460222842
 GameObject:

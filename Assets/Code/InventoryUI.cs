@@ -7,7 +7,7 @@ using Vector3 = UnityEngine.Vector3;
 
 public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
 {
-    private T inventory;
+    public T inventory;
     [SerializeField] private int rows;
     [SerializeField] private int columns;
     [SerializeField] private GameObject inventorySlotPrefab;
@@ -17,16 +17,23 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     [SerializeField] private float height;
     private int inventorySlots;
     private UIItemSlot[] UIItemSlots;
-    private Canvas canvas;
+    [SerializeField] private Canvas canvas;
 
-
-    void Start()
+    
+    protected void Start()
     {
-        canvas = GetComponent<Canvas>();
         Tests();
         SetupInventory();
     }
 
+    public void SetInventoryDisplay(bool display)
+    {
+        int length = rows * columns;
+        for (int i = 0; i < length; i++)
+        {
+            UIItemSlots[i].gameObject.SetActive(display);
+        }
+    }
     private void SetupInventory()
     {
         inventory = (T) new GenericInventory(rows * columns);
@@ -68,6 +75,11 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
             }
         }
         return true;
+    }
+
+    public void QuickStack(T uiInventory)
+    {
+        
     }
     public void StackItems()
     {

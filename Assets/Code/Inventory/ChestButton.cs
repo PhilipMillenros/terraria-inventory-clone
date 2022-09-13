@@ -2,29 +2,21 @@
 
 public class ChestButton : MonoBehaviour
 {
-    [SerializeField] private GameObject chest;
-    private static GameObject activeChest;
+    [SerializeField] private ChestUIManager chestUIManager;
+    [SerializeField] private ChestInventory chest;
     public void ToggleChest()
     {
-        if (activeChest == null)
+        Debug.Assert(chestUIManager != null || chest != null, "Chest button null fields");
+        if (chestUIManager.CurrentChestDisplayed == chest)
         {
-            activeChest = chest;
-            activeChest.SetActive(true);
-        }
-        else if(activeChest == chest)
-        {
-            activeChest.SetActive(false);
-            activeChest = null;
+            chestUIManager.CloseChest();
         }
         else
         {
-            activeChest.SetActive(false);
-            activeChest = chest;
-            chest.SetActive(true);
+            chestUIManager.OpenChest(chest);
         }
-
     }
-
+    
     
 }
 
