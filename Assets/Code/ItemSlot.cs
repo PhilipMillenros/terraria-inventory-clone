@@ -38,7 +38,7 @@ namespace Code
         /// <returns></returns>
         public bool HoldItem(InventoryItem newItem)
         {
-            if (!FulfillsHoldRequirements(newItem))
+            if (!ValidHoldRequirements(newItem))
             {
                 return false;
             }
@@ -86,7 +86,7 @@ namespace Code
                 return false;
             }
 
-            if (!givingItemSlot.FulfillsHoldRequirements(receivingItemSlot.Item) || !receivingItemSlot.FulfillsHoldRequirements(givingItemSlot.item))
+            if (!givingItemSlot.ValidHoldRequirements(receivingItemSlot.Item) || !receivingItemSlot.ValidHoldRequirements(givingItemSlot.item))
             {
                 return false;
             }
@@ -106,7 +106,7 @@ namespace Code
         }
 
         //Derived item slots might need item requirements, example: armor slots only allow armor items
-        public virtual bool FulfillsHoldRequirements(InventoryItem item)
+        public virtual bool ValidHoldRequirements(InventoryItem item)
         {
             return true;
         }

@@ -35,10 +35,11 @@ namespace Code
         }
         public void Sort()
         {
-            StackNonFavoriteDuplicateItems();
+            
             InventoryItem[] items = FindNonFavoriteItems();
             QuickSort(items, 0, items.Length - 1);
             DetachItems(items);
+            
             MoveItemsCloseToFirstIndex(items);
         }
 
@@ -234,7 +235,6 @@ namespace Code
                 givingItem.StackAmount = 0;
                 givingItem.DetachFromItemSlot();
             }
-            
         }
         private void QuickSort(InventoryItem[] items, int left, int right) //Technically QS shouldn't belong to Inventory
         {
@@ -291,7 +291,7 @@ namespace Code
         }
         public static bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
         {
-            return itemSlot1.FulfillsHoldRequirements(itemSlot2.Item) && itemSlot2.FulfillsHoldRequirements(itemSlot1.Item);
+            return itemSlot1.ValidHoldRequirements(itemSlot2.Item) && itemSlot2.ValidHoldRequirements(itemSlot1.Item);
         }
         public void MoveItem(ItemSlot from, ItemSlot to)
         {

@@ -53,7 +53,7 @@ namespace Code
         
         public bool SetItemSlot(ItemSlot newItemSlot)
         {
-            if (!newItemSlot.FulfillsHoldRequirements(this))
+            if (!newItemSlot.ValidHoldRequirements(this))
             {
                 return false;
             }

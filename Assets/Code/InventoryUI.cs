@@ -72,13 +72,14 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     public void StackItems()
     {
         inventory.StackNonFavoriteDuplicateItems();
-        InventoryItem[] items = inventory.FindAllItems();
+        InventoryItem[] items = inventory.FindNonFavoriteItems();
         inventory.EmptyInventory();
         inventory.MoveItemsCloseToFirstIndex(items);
     }
     public void Sort()
     {
         inventory.Sort();
+        StackItems();
     }
     private bool SetItemSlotsTest()
     {
