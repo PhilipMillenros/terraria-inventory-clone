@@ -15,8 +15,8 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     [SerializeField] private Vector2 origin;
     [SerializeField] private float width;
     [SerializeField] private float height;
-    private int inventorySlots;
-    private UIItemSlot[] UIItemSlots;
+    protected int inventorySlots;
+    protected UIItemSlot[] UIItemSlots;
     [SerializeField] private Canvas canvas;
 
     
