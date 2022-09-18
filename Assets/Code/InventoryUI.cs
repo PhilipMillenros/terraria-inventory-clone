@@ -8,31 +8,18 @@ using Vector3 = UnityEngine.Vector3;
 public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
 {
     public T inventory;
+    protected UIItemSlot[] UIItemSlots;
+    
     [SerializeField] private int rows;
     [SerializeField] private int columns;
     [SerializeField] private GameObject inventorySlotPrefab;
     [SerializeField] private Vector2 offset;
     [SerializeField] private Vector2 origin;
-    [SerializeField] private float width;
-    [SerializeField] private float height;
-    protected int inventorySlots;
-    protected UIItemSlot[] UIItemSlots;
     [SerializeField] private Canvas canvas;
 
-    
     protected void Start()
     {
-        Tests();
         SetupInventory();
-    }
-
-    public void SetInventoryDisplay(bool display)
-    {
-        int length = rows * columns;
-        for (int i = 0; i < length; i++)
-        {
-            UIItemSlots[i].gameObject.SetActive(display);
-        }
     }
     private void SetupInventory()
     {
@@ -57,30 +44,6 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
             (itemSlotIndex / rows + 1) * -offset.y * screenSizeMultiplier - origin.y * screenSizeMultiplier +
             canvasHeight);
     }
-    private void Tests()
-    {
-        Debug.Log("Initialization: " + (InitializeTest() ? "Passed" : "Failed"));
-        Debug.Log("Set Item Slots: " + (SetItemSlotsTest() ? "Passed" : "Failed"));
-        Debug.Log("Sort Items: " + (SortTest() ? "Passed" : "Failed"));
-    }
-
-    private bool InitializeTest()
-    {
-        GenericInventory testInventory = new GenericInventory(100);
-        for (int i = 0; i < testInventory.ItemSlotsCount; i++)
-        {
-            if (testInventory[i] == null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    public void QuickStack(T uiInventory)
-    {
-        
-    }
     public void StackItems()
     {
         inventory.StackNonFavoriteDuplicateItems();
@@ -90,49 +53,15 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     }
     public void Sort()
     {
-        inventory.Sort();
         StackItems();
+        inventory.TestSort();
     }
-    private bool SetItemSlotsTest()
+    public void SetInventoryDisplay(bool display)
     {
-        GenericInventory testInventory = new GenericInventory(5);
-        for (int i = 0; i < testInventory.ItemSlotsCount; i++)
+        int length = rows * columns;
+        for (int i = 0; i < length; i++)
         {
-            if (testInventory[i] == null)
-            {
-                return false;
-            }
+            UIItemSlots[i].gameObject.SetActive(display);
         }
-        testInventory.SetItemSlotsCount(12);
-        for (int i = 0; i < testInventory.ItemSlotsCount; i++)
-        {
-            if (testInventory[i] == null)
-            {
-                return false;
-            }
-        }
-        testInventory.SetItemSlotsCount(3);
-        for (int i = 0; i < testInventory.ItemSlotsCount; i++)
-        {
-            if (testInventory[i] == null)
-            {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    private bool SortTest()
-    {
-        GenericInventory testInventory = new GenericInventory(1000);
-        testInventory.Sort();
-        for (int i = 1; i < testInventory.ItemSlotsCount; i++)
-        {
-            if (testInventory[i - 1].Item?.Id > testInventory[i].Item?.Id)
-            {
-                return false;
-            }
-        }
-        return true;
     }
 }
