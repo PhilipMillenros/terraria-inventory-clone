@@ -54,7 +54,7 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     public void Sort()
     {
         StackItems();
-        inventory.TestSort();
+        inventory.Sort();
     }
     public void SetInventoryDisplay(bool display)
     {

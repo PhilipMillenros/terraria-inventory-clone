@@ -35,14 +35,12 @@ namespace Code
         }
         public void Sort()
         {
-            
             InventoryItem[] items = FindNonFavoriteItems();
             QuickSort(items, 0, items.Length - 1);
             DetachItems(items);
             
             MoveItemsCloseToFirstIndex(items);
         }
-
         private void DetachItems(InventoryItem[] items)
         {
             for (int i = 0; i < items.Length; i++)
@@ -236,36 +234,57 @@ namespace Code
                 givingItem.DetachFromItemSlot();
             }
         }
-        private void QuickSort(InventoryItem[] items, int left, int right) //Technically QS shouldn't belong to Inventory
+        
+        public void QuickSort(InventoryItem[] a, int l, int r)
         {
-            int i = left;
-            int y = right;
-            int pivot = left;
-            while (i <= y)
-            {
-                while (items[i].Id < items[pivot].Id)
-                {
-                    i++;
+            if (r <= l)
+                return;
+ 
+            int i = 0, j = 0;
+            
+            Partition(a, l, r, ref i, ref j);
+            
+            QuickSort(a, l, j);
+            QuickSort(a, i, r);
+        }
+        public void Partition(InventoryItem[] items, int l, int r,
+            ref int i, ref int j)
+        {
+            i = l - 1;
+            j = r;
+            int p = l - 1, q = r;
+            int v = items[r].Id;
+ 
+            while (true) {
+                while (items[++i].Id < v)
+                    ;
+                
+                while (v < items[--j].Id)
+                    if (j == l)
+                        break;
+                
+                if (i >= j)
+                    break;
+                
+                Swap(items, i , j);
+                if (items[i].Id == v) {
+                    p++;
+                    Swap(items, p , i);
                 }
-
-                while (items[y].Id > items[pivot].Id)
-                {
-                    y--;
+                if (items[j].Id == v) {
+                    q--;
+                    Swap(items, j , q);
                 }
+            }
+            Swap(items, i , r);
+            
+            j = i - 1;
+            for (int k = l; k < p; k++, j--)
+                Swap(items, k , j);
 
-                if (i > y) continue;
-                Swap(items, i, y);
-                i++;
-                y--;
-            }
-            if (left < y)
-            {
-                QuickSort(items, left, y);
-            }
-            if (right > i)
-            {
-                QuickSort(items, i, right);
-            }
+            i = i + 1;
+            for (int k = r - 1; k > q; k--, i++)
+                Swap(items, i , k);
         }
 
         private void Swap<T>(T[] array, int firstIndex, int secondIndex)
