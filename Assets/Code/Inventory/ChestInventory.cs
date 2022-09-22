@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using Code;
 using UnityEngine;
 
-public class ChestInventory : InventoryUI<GenericInventory>
+public class ChestInventory : InventoryUI
 {
-    private void Start()
+    protected new void Start()
     {
         base.Start();
         SetInventoryDisplay(false);

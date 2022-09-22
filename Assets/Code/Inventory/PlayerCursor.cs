@@ -86,11 +86,11 @@ public class PlayerCursor : MonoBehaviour
             bool idIsMatching = itemSlotClicked.Item.Id == mouseItemSlot.Item.Id;
             if (idIsMatching)
             {
-                GenericInventory.StackItems(itemSlotClicked.Item, mouseItemSlot.Item);
+                Inventory.StackItems(itemSlotClicked.Item, mouseItemSlot.Item);
             }
             else
             {
-                GenericInventory.SwapItems(itemSlotClicked, mouseItemSlot);
+                Inventory.SwapItems(itemSlotClicked, mouseItemSlot);
             }
             return;
         }

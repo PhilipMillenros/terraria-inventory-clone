@@ -8,7 +8,7 @@ namespace Code
     
     using System;
     using System.Collections.Generic;
-    public class GenericInventory
+    public class Inventory
     {
         private ItemSlot[] itemSlots;
         public int ItemSlotsCount
@@ -20,7 +20,7 @@ namespace Code
         {
             get => itemSlots[index];
         }
-        public GenericInventory(int inventorySlots)
+        public Inventory(int inventorySlots)
         {
             itemSlots = new ItemSlot[inventorySlots];
             InitializeArray(itemSlots, () => new ItemSlot());
@@ -35,10 +35,11 @@ namespace Code
         }
         public void Sort()
         {
-            InventoryItem[] items = FindNonFavoriteItems();
-            QuickSort(items, 0, items.Length - 1);
+            InventoryItem[] items = GetAllNonFavoriteItems();
+            int low = 0;
+            int high = items.Length - 1;
+            CustomThreeWayQuickSort(items, ref low, ref high);
             DetachItems(items);
-            
             MoveItemsCloseToFirstIndex(items);
         }
         private void DetachItems(InventoryItem[] items)
@@ -139,7 +140,7 @@ namespace Code
             }
             return itemCount;
         }
-        public InventoryItem[] FindNonFavoriteItems()
+        public InventoryItem[] GetAllNonFavoriteItems()
         {
             int itemCount = NonFavoriteItemsCount();
             
@@ -147,13 +148,124 @@ namespace Code
             int pivot = 0;
             for (int i = 0; i < itemSlots.Length; i++)
             {
-                if (!itemSlots[i].IsEmpty() && !itemSlots[i].Item.IsFavorite())
+                if(!itemSlots[i].IsEmpty() && !itemSlots[i].Item.IsFavorite())
                 {
                     items[pivot] = itemSlots[i].Item;
                     pivot++;
                 }
             }
             return items;
+        }
+        private void CustomThreeWayQuickSort(InventoryItem[] items, ref int low, ref int high)
+        {
+            if (high <= low)
+            {
+                return;
+            }
+            int lowest = low;
+            int highest = high;
+            
+            Partition(items, ref low, ref high);
+            NearlySortedSort(items, low , high);
+            high++;
+            low--;
+            
+            CustomThreeWayQuickSort(items, ref lowest, ref low);
+            CustomThreeWayQuickSort(items, ref high, ref highest);
+        }
+        private void Partition(InventoryItem[] items, ref int low, ref int high)
+        {
+            int i = low;
+            int pivot = items[high].Id;
+            while (i < high)
+            {
+                if (items[i].Id < pivot)
+                {
+                    Swap(items,i, low);
+                    i++;
+                    low++;
+                }
+                else if (items[i].Id > pivot)
+                {
+                    Swap(items,i, high);
+                    high--;
+                }
+                else
+                {
+                    i += 1;
+                }
+            }
+        }
+
+        private void NearlySortedSort(InventoryItem[] array, int low, int high)
+        {
+            int lowestStack = GetLowestStackIndex(array, low, high);
+            Swap(array, lowestStack, high);
+        }
+
+        private int GetLowestStackIndex(InventoryItem[] array, int low, int high)
+        {
+            int lowestStackIndex = low;
+            for (int i = low + 1; i < high; i++)
+            {
+                if (array[i].StackAmount < array[lowestStackIndex].StackAmount)
+                {
+                    lowestStackIndex = i;
+                }
+            }
+            return lowestStackIndex;
+        }
+        private void Swap<T>(T[] array, int firstIndex, int secondIndex)
+        {
+            T temp = array[firstIndex];
+            array[firstIndex] = array[secondIndex];
+            array[secondIndex] = temp;
+        }
+        public static void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
+        {
+            if (!IsSwapValid(itemSlot1, itemSlot2))
+            {
+                return;
+            }
+            InventoryItem temp = itemSlot1.Item;
+            itemSlot1.HoldItem(itemSlot2.Item);
+            itemSlot2.HoldItem(temp);
+        }
+
+        public void TransferItems(ItemSlot from, ItemSlot to, int amount)
+        {
+            from.TransferItems(to, amount);
+        }
+        public static bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
+        {
+            return itemSlot1.ValidHoldRequirements(itemSlot2.Item) && itemSlot2.ValidHoldRequirements(itemSlot1.Item);
+        }
+        public void MoveItem(ItemSlot from, ItemSlot to)
+        {
+            if (!to.IsEmpty())
+            {
+                SwapItems(from, to);
+            }
+            to.HoldItem(from.RemoveItem());
+        }
+        public void SetItemSlotsCount(int amount)
+        { 
+            ItemSlot[] newItemSlots = new ItemSlot[amount];
+            for (int i = 0; i < amount; i++)
+            {
+                if (i >= itemSlots.Length)
+                {
+                    break;
+                }
+                newItemSlots[i] = itemSlots[i];
+            }
+
+            int uninitializedPartOfArray = itemSlots.Length - 1;
+            if (uninitializedPartOfArray < amount - 1)
+            {
+                InitializeArray(newItemSlots, () => new ItemSlot(), uninitializedPartOfArray);
+            }
+            itemSlots = newItemSlots;
         }
         public void StackNonFavoriteDuplicateItems()
         {
@@ -233,111 +345,6 @@ namespace Code
                 givingItem.StackAmount = 0;
                 givingItem.DetachFromItemSlot();
             }
-        }
-        
-        public void QuickSort(InventoryItem[] a, int l, int r)
-        {
-            if (r <= l)
-                return;
- 
-            int i = 0, j = 0;
-            
-            Partition(a, l, r, ref i, ref j);
-            
-            QuickSort(a, l, j);
-            QuickSort(a, i, r);
-        }
-        public void Partition(InventoryItem[] items, int l, int r,
-            ref int i, ref int j)
-        {
-            i = l - 1;
-            j = r;
-            int p = l - 1, q = r;
-            int v = items[r].Id;
- 
-            while (true) {
-                while (items[++i].Id < v)
-                    ;
-                
-                while (v < items[--j].Id)
-                    if (j == l)
-                        break;
-                
-                if (i >= j)
-                    break;
-                
-                Swap(items, i , j);
-                if (items[i].Id == v) {
-                    p++;
-                    Swap(items, p , i);
-                }
-                if (items[j].Id == v) {
-                    q--;
-                    Swap(items, j , q);
-                }
-            }
-            Swap(items, i , r);
-            
-            j = i - 1;
-            for (int k = l; k < p; k++, j--)
-                Swap(items, k , j);
-
-            i = i + 1;
-            for (int k = r - 1; k > q; k--, i++)
-                Swap(items, i , k);
-        }
-
-        private void Swap<T>(T[] array, int firstIndex, int secondIndex)
-        {
-            T temp = array[firstIndex];
-            array[firstIndex] = array[secondIndex];
-            array[secondIndex] = temp;
-        }
-        public static void SwapItems(ItemSlot itemSlot1, ItemSlot itemSlot2) 
-        {
-            if (!IsSwapValid(itemSlot1, itemSlot2))
-            {
-                return;
-            }
-            InventoryItem temp = itemSlot1.Item;
-            itemSlot1.HoldItem(itemSlot2.Item);
-            itemSlot2.HoldItem(temp);
-        }
-
-        public void TransferItems(ItemSlot from, ItemSlot to, int amount)
-        {
-            from.TransferItems(to, amount);
-        }
-        public static bool IsSwapValid(ItemSlot itemSlot1, ItemSlot itemSlot2)
-        {
-            return itemSlot1.ValidHoldRequirements(itemSlot2.Item) && itemSlot2.ValidHoldRequirements(itemSlot1.Item);
-        }
-        public void MoveItem(ItemSlot from, ItemSlot to)
-        {
-            if (!to.IsEmpty())
-            {
-                SwapItems(from, to);
-            }
-            to.HoldItem(from.RemoveItem());
-        }
-        public void SetItemSlotsCount(int amount)
-        { 
-            ItemSlot[] newItemSlots = new ItemSlot[amount];
-            for (int i = 0; i < amount; i++)
-            {
-                if (i >= itemSlots.Length)
-                {
-                    break;
-                }
-                newItemSlots[i] = itemSlots[i];
-            }
-
-            int uninitializedPartOfArray = itemSlots.Length - 1;
-            if (uninitializedPartOfArray < amount - 1)
-            {
-                InitializeArray(newItemSlots, () => new ItemSlot(), uninitializedPartOfArray);
-            }
-            itemSlots = newItemSlots;
         }
     }
 }

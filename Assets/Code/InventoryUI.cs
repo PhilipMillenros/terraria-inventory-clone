@@ -5,9 +5,9 @@ using Quaternion = UnityEngine.Quaternion;
 using Vector2 = UnityEngine.Vector2;
 using Vector3 = UnityEngine.Vector3;
 
-public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
+public class InventoryUI : MonoBehaviour
 {
-    public T inventory;
+    public Inventory inventory;
     protected UIItemSlot[] UIItemSlots;
     
     [SerializeField] private int rows;
@@ -23,16 +23,16 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     }
     private void SetupInventory()
     {
-        inventory = (T) new GenericInventory(rows * columns);
+        inventory = new Inventory(rows * columns);
         UIItemSlots = new UIItemSlot[rows * columns];
         for (int i = 0; i < rows * columns; i++)
         {
-            UIItemSlots[i] = Instantiate(inventorySlotPrefab, GetItemSlotPosition(i),
+            UIItemSlots[i] = Instantiate(inventorySlotPrefab, CalculateItemSlotPosition(i),
                 Quaternion.identity, canvas.transform).GetComponent<UIItemSlot>();
             UIItemSlots[i].VisualizeItemSlot(inventory[i]);
         }
     }
-    private Vector2 GetItemSlotPosition(int itemSlotIndex)
+    private Vector2 CalculateItemSlotPosition(int itemSlotIndex)
     {
         var pixelRect = canvas.pixelRect;
         float canvasWidth = pixelRect.width;
@@ -47,7 +47,7 @@ public class InventoryUI<T> : MonoBehaviour where T : GenericInventory
     public void StackItems()
     {
         inventory.StackNonFavoriteDuplicateItems();
-        InventoryItem[] items = inventory.FindNonFavoriteItems();
+        InventoryItem[] items = inventory.GetAllNonFavoriteItems();
         inventory.EmptyInventory();
         inventory.MoveItemsCloseToFirstIndex(items);
     }

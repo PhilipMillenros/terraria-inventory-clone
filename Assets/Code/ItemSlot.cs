@@ -81,7 +81,7 @@ namespace Code
                 return false;
             }
             
-            if (!receivingItemSlot.IsEmpty() && !GenericInventory.ItemsIdMatches(givingItemSlot.Item, receivingItemSlot.Item))
+            if (!receivingItemSlot.IsEmpty() && !Inventory.ItemsIdMatches(givingItemSlot.Item, receivingItemSlot.Item))
             {
                 return false;
             }
