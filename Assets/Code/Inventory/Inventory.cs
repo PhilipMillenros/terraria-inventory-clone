@@ -40,7 +40,6 @@ namespace Code
             int low = 0;
             int high = items.Length - 1;
             CustomThreeWayQuickSort(items, ref low, ref high);
-         //   SortStacks(items);
             DetachItems(items);
             MoveItemsCloseToFirstIndex(items);
         }
@@ -274,64 +273,25 @@ namespace Code
         }
         public void StackNonFavoriteDuplicateItems()
         {
-            //InventoryItem[] items = GetAllNonFavoriteItems();
-            //int maxStackAmount = items[0].MaxStackAmount;
-            //int[] totalStackPerId = new int[items.Length];
-//
-            //for (int i = 0; i < totalStackPerId.Length; i++)
-            //{
-            //    totalStackPerId[items[i].Id] += items[i].StackAmount;
-            //}
-//
-            //for (int i = 0; i < totalStackPerId.Length; i++)
-            //{
-            //    while(totalStackPerId)
-            //}
+            InventoryItem[] items = GetAllNonFavoriteItems();
             
-            var itemLists = new Dictionary<int, List<InventoryItem>>();
-            List<int> uniqueIds = new List<int>();
+            int[] totalStackPerId = new int[items.Length];
             
-            for (int i = 0; i < itemSlots.Length; i++)
+            for (int i = 0; i < totalStackPerId.Length; i++)
             {
-                if (itemSlots[i].IsEmpty() || itemSlots[i].Item.IsFavorite())
-                {
-                    continue;
-                }
-                
-                int itemId = itemSlots[i].Item.Id;
-                if (!itemLists.ContainsKey(itemId))
-                {
-                    itemLists.Add(itemId, new List<InventoryItem>());
-                    uniqueIds.Add(itemId);
-                }
-                itemLists[itemId].Add(itemSlots[i].Item);
+                totalStackPerId[items[i].Id] += items[i].StackAmount;
             }
             
-            for (int i = 0; i < uniqueIds.Count; i++)
+            int maxStackAmount = items[0].MaxStackAmount;
+            
+            for (int i = 0; i < items.Length; i++)
             {
-                int stackSum = GetStackSum(itemLists[uniqueIds[i]]);
-                int maxStack = itemLists[uniqueIds[i]][0].MaxStackAmount;
-                int fullStacksCount = stackSum / maxStack;
-                int stackRemainder = stackSum % maxStack;
-                List<InventoryItem> duplicates = itemLists[uniqueIds[i]];
-                
-                int length = duplicates.Count;
-                for (int y = 0; y < length; y++)
+                int stackValue = Mathf.Clamp( totalStackPerId[items[i].Id],0, maxStackAmount);
+                items[i].StackAmount = stackValue;
+                totalStackPerId[items[i].Id] -= stackValue;
+                if (items[i].StackAmount < 1)
                 {
-                    if (fullStacksCount > 0)
-                    {
-                        duplicates[y].StackAmount = maxStack;
-                        fullStacksCount--;
-                    }
-                    else if(stackRemainder > 0)
-                    {
-                        duplicates[y].StackAmount = stackRemainder;
-                        stackRemainder -= stackRemainder;
-                    }
-                    else
-                    {
-                        duplicates[y].DetachFromItemSlot();
-                    }
+                    items[i].DetachFromItemSlot();
                 }
             }
         }
