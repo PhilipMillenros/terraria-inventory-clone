@@ -37,6 +37,11 @@ namespace Code
         public void Sort()
         {
             InventoryItem[] items = GetAllNonFavoriteItems();
+            if (items.Length < 2)
+            {
+                return;
+            }
+            
             int low = 0;
             int high = items.Length - 1;
             CustomThreeWayQuickSort(items, ref low, ref high);
@@ -274,6 +279,10 @@ namespace Code
         public void StackNonFavoriteDuplicateItems()
         {
             InventoryItem[] items = GetAllNonFavoriteItems();
+            if (items.Length < 2)
+            {
+                return;
+            }
             
             int[] totalStackPerId = new int[items.Length];
             
@@ -289,10 +298,6 @@ namespace Code
                 int stackValue = Mathf.Clamp( totalStackPerId[items[i].Id],0, maxStackAmount);
                 items[i].StackAmount = stackValue;
                 totalStackPerId[items[i].Id] -= stackValue;
-                if (items[i].StackAmount < 1)
-                {
-                    items[i].DetachFromItemSlot();
-                }
             }
         }
         private int GetStackSum(List<InventoryItem> items)
