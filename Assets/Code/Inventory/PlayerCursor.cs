@@ -74,7 +74,7 @@ public class PlayerCursor : MonoBehaviour
 
     private void ItemSlotLeftClickActions(ItemSlot itemSlotClicked)
     {
-        ItemSlot mouseItemSlot = mouseUIItemSlot.visualizedItemSlot;
+        ItemSlot mouseItemSlot = mouseUIItemSlot.VisualizedItemSlot;
         if (itemSlotClicked.IsEmpty() && !mouseItemSlot.IsEmpty())
         {
             itemSlotClicked.HoldItem(mouseItemSlot.Item);
@@ -103,7 +103,7 @@ public class PlayerCursor : MonoBehaviour
 
     private void ItemSlotRightClickActions(ItemSlot itemSlotClicked)
     {
-        ItemSlot mouseItemSlot = mouseUIItemSlot.visualizedItemSlot;
+        ItemSlot mouseItemSlot = mouseUIItemSlot.VisualizedItemSlot;
         if (!itemSlotClicked.IsEmpty())
         {
             if (mouseItemSlot.IsEmpty() || itemSlotClicked.Item.Id == mouseItemSlot.Item.Id)
@@ -115,7 +115,7 @@ public class PlayerCursor : MonoBehaviour
     
     private IEnumerator RapidlyTransferItems(ItemSlot itemSlotClicked)
     {
-        ItemSlot mouseItemSlot = mouseUIItemSlot.visualizedItemSlot;
+        ItemSlot mouseItemSlot = mouseUIItemSlot.VisualizedItemSlot;
         float delay = 0.3f;
         while (!itemSlotClicked.IsEmpty() && Input.GetMouseButton(1))
         {

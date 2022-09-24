@@ -7,15 +7,16 @@ using UnityEngine.UI;
 
 public class UIItemSlot : MonoBehaviour, IPointerDownHandler
 {
-    public GameObject UIItemPrefab;
-    private UIItem storedItem;
     [SerializeField] protected Sprite normalItemSlotSprite;
     [SerializeField] protected Sprite favoriteItemSlotSprite;
+    
     private bool favorite;
-    public ItemSlot visualizedItemSlot;
-    public static event Action<ItemSlot, PointerEventData> OnClickEvent;
     private Image itemSlotImage;
-
+    private UIItem storedItem;
+    
+    public ItemSlot VisualizedItemSlot;
+    public GameObject UIItemPrefab; 
+    public static event Action<ItemSlot, PointerEventData> OnClickEvent;
 
     private void Awake()
     {
@@ -25,7 +26,7 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
     public void VisualizeItemSlot(ItemSlot newItemSlot)
     {
         UnsubscribePreviousItemSlot();
-        visualizedItemSlot = newItemSlot;
+        VisualizedItemSlot = newItemSlot;
         ListenToNewItemSlot(newItemSlot);
         if (!newItemSlot.IsEmpty())
         {
@@ -39,11 +40,11 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
 
     private void UnsubscribePreviousItemSlot()
     {
-        if (visualizedItemSlot != null)
+        if (VisualizedItemSlot != null)
         {
-            visualizedItemSlot.OnItemReceived -= UpdateHeldItemVisuals;
-            visualizedItemSlot.OnItemRemoved -= HideItem;
-            visualizedItemSlot.OnItemValuesUpdated -= VisualizeItemValues;
+            VisualizedItemSlot.OnItemReceived -= UpdateHeldItemVisuals;
+            VisualizedItemSlot.OnItemRemoved -= HideItem;
+            VisualizedItemSlot.OnItemValuesUpdated -= VisualizeItemValues;
         }
     }
 
@@ -56,7 +57,7 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
     
     private void UpdateHeldItemVisuals(InventoryItem item)
     {
-        if (visualizedItemSlot == null)
+        if (VisualizedItemSlot == null)
         {
             return;
         }
@@ -70,7 +71,7 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
 
     private void VisualizeItemValues(InventoryItem item)
     {
-        if (!visualizedItemSlot.IsEmpty())
+        if (!VisualizedItemSlot.IsEmpty())
         {
             storedItem.gameObject.SetActive(true);
             storedItem.DisplayItemValues(transform.position, item.StackAmount, item.Id);
@@ -91,9 +92,9 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
         {
             return;
         }
-        if (!visualizedItemSlot.IsEmpty())
+        if (!VisualizedItemSlot.IsEmpty())
         {
-            itemSlotImage.sprite = visualizedItemSlot.Item.IsFavorite() ? favoriteItemSlotSprite : normalItemSlotSprite;
+            itemSlotImage.sprite = VisualizedItemSlot.Item.IsFavorite() ? favoriteItemSlotSprite : normalItemSlotSprite;
         }
         else
         {
@@ -107,14 +108,14 @@ public class UIItemSlot : MonoBehaviour, IPointerDownHandler
     }
     public void ToggleFavorite()
     {
-        if (!visualizedItemSlot.IsEmpty())
+        if (!VisualizedItemSlot.IsEmpty())
         {
             favorite = !favorite;
-            storedItem.favorite = favorite;
+            storedItem.Favorite = favorite;
         }
     }
     public void OnPointerDown(PointerEventData eventData)
     {
-        OnClickEvent?.Invoke(visualizedItemSlot, eventData);
+        OnClickEvent?.Invoke(VisualizedItemSlot, eventData);
     }
 }

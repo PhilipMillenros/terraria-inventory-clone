@@ -1,4 +1,5 @@
 ﻿
+using System.Collections;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Analytics;
@@ -39,6 +40,7 @@ namespace Code
             int low = 0;
             int high = items.Length - 1;
             CustomThreeWayQuickSort(items, ref low, ref high);
+         //   SortStacks(items);
             DetachItems(items);
             MoveItemsCloseToFirstIndex(items);
         }
@@ -166,7 +168,7 @@ namespace Code
             int highest = high;
             
             Partition(items, ref low, ref high);
-            NearlySortedSort(items, low , high);
+            SortMiddlePartition(items, low, high);
             high++;
             low--;
             
@@ -177,7 +179,7 @@ namespace Code
         {
             int i = low;
             int pivot = items[high].Id;
-            while (i < high)
+            while (i <= high)
             {
                 if (items[i].Id < pivot)
                 {
@@ -196,18 +198,21 @@ namespace Code
                 }
             }
         }
-
-        private void NearlySortedSort(InventoryItem[] array, int low, int high)
+        private void SortMiddlePartition(InventoryItem[] items, int low, int high)
         {
-            int lowestStack = GetLowestStackIndex(array, low, high);
-            Swap(array, lowestStack, high);
+            int lowestStack = GetLowestStackIndex(items, low, high);
+            Swap(items, lowestStack, high);
         }
 
         private int GetLowestStackIndex(InventoryItem[] array, int low, int high)
         {
             int lowestStackIndex = low;
-            for (int i = low + 1; i < high; i++)
+            for (int i = low; i < high + 1; i++)
             {
+                if (array[low].Id != array[i].Id)
+                {
+                    continue;
+                }
                 if (array[i].StackAmount < array[lowestStackIndex].StackAmount)
                 {
                     lowestStackIndex = i;
@@ -269,6 +274,20 @@ namespace Code
         }
         public void StackNonFavoriteDuplicateItems()
         {
+            //InventoryItem[] items = GetAllNonFavoriteItems();
+            //int maxStackAmount = items[0].MaxStackAmount;
+            //int[] totalStackPerId = new int[items.Length];
+//
+            //for (int i = 0; i < totalStackPerId.Length; i++)
+            //{
+            //    totalStackPerId[items[i].Id] += items[i].StackAmount;
+            //}
+//
+            //for (int i = 0; i < totalStackPerId.Length; i++)
+            //{
+            //    while(totalStackPerId)
+            //}
+            
             var itemLists = new Dictionary<int, List<InventoryItem>>();
             List<int> uniqueIds = new List<int>();
             

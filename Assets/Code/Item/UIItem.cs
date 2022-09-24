@@ -6,12 +6,14 @@ using UnityEngine.UI;
 
 public class UIItem : MonoBehaviour
 {
-    [SerializeField] private int quantity = 1;
-    [HideInInspector] public bool favorite;
     [SerializeField] TextMeshProUGUI itemStackText;
-    [SerializeField] private Image image;
     [SerializeField] private SpriteCollection ItemCollection;
+    [SerializeField] private Image image;
+
+    [HideInInspector] public bool Favorite;
+    
     private RectTransform rectTransform;
+    
     private void Awake()
     {
         SetupQuantityText();
