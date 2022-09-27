@@ -7,7 +7,9 @@ namespace Code
         public int Id { get; private set; }
         private int stackAmount = 1;
         private bool favorite = false;
-        
+        public int MaxStackAmount { get; private set; }
+        private ItemSlot itemSlot;
+        public Action OnItemUpdated;
         public int StackAmount 
         { 
             get => stackAmount; 
@@ -22,9 +24,7 @@ namespace Code
                 ItemSlot?.ItemValuesUpdated();
             } 
         }
-        public int MaxStackAmount { get; private set; }
-        private ItemSlot itemSlot;
-        public Action OnItemUpdated;
+        
         public ItemSlot ItemSlot
         {
             get => itemSlot;

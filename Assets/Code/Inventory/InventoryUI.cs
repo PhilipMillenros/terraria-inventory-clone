@@ -49,7 +49,7 @@ public class InventoryUI : MonoBehaviour
         inventory.StackNonFavoriteDuplicateItems();
         InventoryItem[] items = inventory.GetAllNonFavoriteItems();
         inventory.EmptyInventory();
-        inventory.MoveItemsCloseToFirstIndex(items);
+        inventory.MoveItemsToFirstAvailableSlot(items);
     }
     public void Sort()
     {

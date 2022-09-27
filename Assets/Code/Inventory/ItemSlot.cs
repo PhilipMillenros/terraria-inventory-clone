@@ -1,6 +1,4 @@
 ﻿using System;
-using UnityEngine;
-using Random = UnityEngine.Random;
 
 namespace Code
 {
@@ -10,7 +8,7 @@ namespace Code
         public event Action OnItemRemoved;
         public event Action<InventoryItem> OnItemValuesUpdated;
         public event Action<InventoryItem> OnItemReceived;
-        
+        private static readonly Random random = new Random();
         public InventoryItem Item
         {
             get => item;
@@ -19,7 +17,7 @@ namespace Code
         
         public ItemSlot()
         {
-            item = new InventoryItem(Random.Range(0, 3), Random.Range(4, 400), this);
+            item = new InventoryItem(random.Next(0, 3), random.Next(4, 400), this);
         }
         
         public bool IsEmpty()
@@ -105,7 +103,7 @@ namespace Code
             return inventoryItem.StackAmount > inventoryItem.MaxStackAmount;
         }
 
-        //Derived item slots might need item requirements, example: armor slots only allow armor items
+        //Derived item slots need item requirements, example: armor slots only allow armor items
         public virtual bool ValidHoldRequirements(InventoryItem item)
         {
             return true;

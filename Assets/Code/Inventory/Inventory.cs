@@ -1,12 +1,6 @@
 ﻿
-using System.Collections;
-using System.Runtime.CompilerServices;
-using UnityEngine;
-using UnityEngine.Analytics;
-
 namespace Code
 {
-    
     using System;
     using System.Collections.Generic;
     public class Inventory
@@ -41,12 +35,9 @@ namespace Code
             {
                 return;
             }
-            
-            int low = 0;
-            int high = items.Length - 1;
-            CustomThreeWayQuickSort(items, ref low, ref high);
+            CustomThreeWayQuickSort(items, 0, items.Length - 1);
             DetachItems(items);
-            MoveItemsCloseToFirstIndex(items);
+            MoveItemsToFirstAvailableSlot(items);
         }
         private void DetachItems(InventoryItem[] items)
         {
@@ -55,7 +46,7 @@ namespace Code
                 items[i].DetachFromItemSlot();
             }
         }
-        public void MoveItemsCloseToFirstIndex(InventoryItem[] items)
+        public void MoveItemsToFirstAvailableSlot(InventoryItem[] items)
         {
             int itemIndex = 0;
             for (int i = 0; i < itemSlots.Length; i++)
@@ -162,7 +153,7 @@ namespace Code
             }
             return items;
         }
-        private void CustomThreeWayQuickSort(InventoryItem[] items, ref int low, ref int high)
+        private void CustomThreeWayQuickSort(InventoryItem[] items, int low, int high)
         {
             if (high <= low)
             {
@@ -176,8 +167,8 @@ namespace Code
             high++;
             low--;
             
-            CustomThreeWayQuickSort(items, ref lowest, ref low);
-            CustomThreeWayQuickSort(items, ref high, ref highest);
+            CustomThreeWayQuickSort(items,lowest,low);
+            CustomThreeWayQuickSort(items,high, highest);
         }
         private void Partition(InventoryItem[] items, ref int low, ref int high)
         {
@@ -283,19 +274,17 @@ namespace Code
             {
                 return;
             }
-            
             int[] totalStackPerId = new int[items.Length];
             
             for (int i = 0; i < totalStackPerId.Length; i++)
             {
                 totalStackPerId[items[i].Id] += items[i].StackAmount;
             }
-            
             int maxStackAmount = items[0].MaxStackAmount;
             
             for (int i = 0; i < items.Length; i++)
             {
-                int stackValue = Mathf.Clamp( totalStackPerId[items[i].Id],0, maxStackAmount);
+                int stackValue = Math.Min(totalStackPerId[items[i].Id], maxStackAmount);
                 items[i].StackAmount = stackValue;
                 totalStackPerId[items[i].Id] -= stackValue;
             }
